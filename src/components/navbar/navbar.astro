@@ -2,37 +2,11 @@
 import Container from "@components/container.astro";
 import { Picture } from "@astrojs/image/components";
 import Logo from "../../assets/logo.webp";
-import Dropdown from "./dropdown.astro";
-import { Astronav, MenuItems, MenuIcon } from "astro-navbar";
-import Link from "@components/ui/link.astro";
-
-const menuitems = [
-  {
-    title: "Features",
-    path: "#",
-    children: [
-      { title: "Action", path: "/" },
-      { title: "404 Page", path: "/404" },
-    ],
-  },
-  {
-    title: "Pricing",
-    path: "/pricing",
-  },
-  {
-    title: "About",
-    path: "/about",
-  },
-
-  {
-    title: "Contact",
-    path: "/contact",
-  },
-];
+import { MenuIcon } from "astro-navbar";
 ---
 
 <Container>
-  <div class="navbar bg-base-100 absolute z-10 bg-transparent">
+  <div class="navbar bg-base-100 absolute z-20 bg-transparent">
     <div class="flex-1 ml-9 mt-2">
       <div class="flex w-full lg:w-auto items-center justify-between">
         <a href="/" class="text-lg">
@@ -124,29 +98,3 @@ const menuitems = [
     </div>
   </div>
 </Container>
-
-<!-- <MenuItems class="hidden w-full lg:w-auto mt-2 lg:flex lg:mt-0">
-  <ul class="flex flex-col lg:flex-row lg:gap-3">
-    <!-- {
-            menuitems.map((item, index) => (
-              <>
-                {item.children && (
-                  <Dropdown
-                    title={item.title}
-                    children={item.children}
-                    lastItem={index === menuitems.length - 1}
-                  />
-                )}
-
-                {!item.children && (
-                  <li>
-                    <a
-                      href={item.path}
-                      class="flex lg:px-3 py-2 text-gray-600 hover:text-gray-900">
-                      {item.title}
-                    </a>
-                  </li>
-                )}
-              </>
-            ))
-          } -->

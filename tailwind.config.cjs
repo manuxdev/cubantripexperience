@@ -6,6 +6,9 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: ["Inter Variable", "Inter", ...defaultTheme.fontFamily.sans],
+        boxShadow: {
+          'primary': '3px 4px 10px 0px rgba(0, 0, 0, 0.5)'
+        }
       },
     },
   },

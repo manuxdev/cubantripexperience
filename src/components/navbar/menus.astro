@@ -1,0 +1,90 @@
+---
+import Dropdown from "./dropdown.astro";
+import { MenuItems } from "astro-navbar";
+
+const menuitems = [
+  {
+    title: "Features",
+    path: "#",
+    children: [
+      { title: "Action", path: "/" },
+      { title: "404 Page", path: "/404" },
+    ],
+  },
+  {
+    title: "Destinations",
+    path: "/pricing",
+  },
+  {
+    title: "Services",
+    path: "/about",
+  },
+
+  {
+    title: "Contact us",
+    path: "/contact",
+  },
+  
+];
+---
+<div>
+<footer
+  class="flex items-center justify-center bg-[#494944f1]  py-3 mx-[105px] rounded-xl mt-[-70px] z-20 sticky top-0 "
+  id="menus">
+  
+  <MenuItems class="hidden  w-full lg:w-auto mt-2 lg:flex lg:mt-0 ml-52">
+    <ul class="flex flex-col lg:flex-row lg:gap-3">
+      {
+        menuitems.map((item, index) => (
+          <>
+            {!item.children && (
+              <li>
+                <a
+                  href={item.path}
+                  class="flex lg:px-3 py-2 text-white text-base font-semibold hover:text-[#F3CB11]">
+                  {item.title}
+                  
+                </a>
+              </li>
+            )}
+          </>
+        ))
+      }
+    </ul>
+  </MenuItems>
+  <button
+  class="btn bg-[#BAAF42] text-white border-none px-6 hover:bg-[#F1CB10] hover:text-black ml-16 rounded-md"
+  >Book</button>
+ 
+
+ 
+  <details class="dropdown dropdown-end ml-10 ">
+    <summary class=" btn bg-slate-700 border-none">😎 Flags</summary>
+    <ul class="p-2 shadow menu dropdown-content  z-[1] bg-slate-700 rounded-box w-20">
+      <li><a>😑</a></li>
+      <li><a>😐</a></li>
+      <li><a>😪</a></li>
+    </ul>
+  </details>
+  
+</footer>
+
+<style>
+  #menus {
+    box-shadow: 3px 4px 10px 0px rgba(0, 0, 0, 0.5);
+    transition: background 0.3s, border 0.3s, border-radius 0.3s,
+      box-shadow 0.3s;
+  }
+
+  /* #list:hover{
+    background-color: #cfc725;
+    height: 1px;
+    content: "";
+    left: 0;
+    bottom: 0;
+    transform: scale(1);
+    display: block;
+    transition: .3s;
+    transition-timing-function: cubic-bezier(.58,.3,.005,1);
+  } */
+</style>
