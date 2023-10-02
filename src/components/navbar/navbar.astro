@@ -1,32 +1,26 @@
 ---
 import Container from "@components/container.astro";
-import { Picture } from "@astrojs/image/components";
-import Logo from "../../assets/logo.webp";
-import { MenuIcon } from "astro-navbar";
 ---
 
 <Container>
   <div class="navbar bg-base-100 absolute z-20 bg-transparent">
-    <div class="flex-1 ml-9 mt-2">
+    <div class="flex-1 ml-9 mt-2 w-1/2">
       <div class="flex w-full lg:w-auto items-center justify-between">
         <a href="/" class="text-lg">
-          <Picture
-            src={Logo}
-            alt="CubanTripExperience"
-            widths={[50, 100, 150]}
-            sizes="(max-width: 120px) 110px, 110px"
-            loading="eager"
-            format="avif"
+          <img
+            src="src/assets/logo.webp"
+            alt="logo"
+            class="h-[50px] sm:h-[75px]"
           />
         </a>
-        <div class="block lg:hidden">
+        <!-- <div class="block lg:hidden">
           <MenuIcon class="w-4 h-4 text-gray-800" />
-        </div>
+        </div> -->
       </div>
     </div>
-    <div class="flex-none">
+    <div class="flex-none w-1/2 justify-end">
       <div>
-        <div class="hidden lg:flex items-center gap-4 mr-8">
+        <div class="hidden md:flex items-center gap-4 mr-8">
           <a
             href="https://www.facebook.com/profile.php?id=61551441593993"
             target="_blank"

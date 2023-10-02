@@ -1,23 +1,22 @@
 ---
 // import Dropdown from "../components/navbar/dropdown.astro";
-
-
- 
 ---
 
-<div class="hero min-h-screen bg-bottom" id="hero">
+<div
+  class="hero md:h-screen h-60 md:bg-[bottom,center] bg-bottom bg-no-repeat bg-cover"
+  id="hero">
   <div class="hero-overlay bg-opacity-50 bg-blend-multiply bg-[#503607] z-10">
   </div>
   <div
     class="flex items-center justify-center max-w-7xl w-full gap-4 p-4 text-center text-neutral-content z-20">
     <div class="w-full">
-      <h1 class="mb-5 text-5xl w-full font-bold text-white">
+      <h1 class="mb-5 text-xl md:text-5xl w-full font-bold text-white">
         Cuban Trip Experience
       </h1>
-      <p class="mb-5 w-full text-xl">
+      <p class="mb-5 w-full md:text-xl text-xs">
         Discover the beauty of Cuba with our taxi service.
       </p>
-      <p class="mb-5 w-full text-xl mt-[-18px]">
+      <p class="md:mb-5 w-full md:text-xl text-xs mt-[-18px]">
         Tour the island with comfort and safety.
       </p>
       <!-- <button
@@ -30,7 +29,7 @@
 
 <style>
   #hero {
-    background-image: url(../assets/hero.webp);
+    background-image: url(../../assets/hero.webp);
   }
 </style>
 

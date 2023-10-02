@@ -1,0 +1,68 @@
+---
+const sections = [
+  {
+    img: "🥓",
+    name: "Quality Trip",
+    description:
+      "We have many years of experience, command of languages ​​and knowledge of the best routes, thus offering a unique experience.",
+  },
+  {
+    img: "🍿",
+    name: "National Coverage",
+    description:
+      " Find with us the possibility of reaching any corner of the country, providing a reliable and comfortable service for your journeys throughout the nation.",
+  },
+  {
+    img: "🛴",
+    name: "Cuban Essence",
+    description:
+      "Get to know the true essence of Cuba. Our drivers will immerse you in the culture, traditions and warmth of the Cuban people, ensuring an authentic and enriching experience on each journey.",
+  },
+];
+---
+
+<main class="flex items-center justify-center flex-col mt-[70px]">
+  <div class="w-[65%]">
+    <section class="flex items-center justify-center flex-col">
+      <h2 class="text-4xl font-extrabold text-black">WHY ARE WE THE BEST?</h2>
+      <p class="text-[12px] text-[#7a7a7a] mt-6 text-center">
+        We stand out for our punctuality, safety and comfort. Our highly trained
+        drivers offer a friendly and respectful treatment. In addition, we have
+        a modern and well-maintained fleet, and we strive to exceed our
+        customers' expectations on every trip.
+      </p>
+    </section>
+    <!-- <section class="flex items-center justify-center mt-12">
+      {
+        sections.map((item) => {
+          return (
+            <article class="flex flex-col items-center mx-3 ">
+              <div class=" bg-lime-700 ">{item.img}</div>
+              <h2 class="text-2xl font-bold text-black">{item.name}</h2>
+              <p class="text-center mt-6">{item.description}</p>
+            </article>
+          );
+        })
+      }
+    </section> -->
+    <div class="grid sm:grid-cols-2 md:grid-cols-3 mt-16 gap-10">
+      {
+        sections.map((item) => (
+          <div class="flex flex-col items-center ">
+            <div class="">
+              <div class="text-5xl pointer-events-nonex"> {item.img} </div>
+            </div>
+            <div>
+              <h2 class=" text-2xl font-bold text-black text-center mt-5">
+                {item.name}
+              </h2>
+              <p class="text-slate-500 mt-5  text-base leading-relaxed text-center">
+                {item.description}
+              </p>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</main>
