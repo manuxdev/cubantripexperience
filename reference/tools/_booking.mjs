@@ -3,7 +3,7 @@
  * Reads from Notion (the next reference) but never writes to it.
  */
 const [token, db] = process.argv.slice(2);
-const src = await import("../../src/server/booking.ts");
+const src = await import("../../api/booking.ts");
 let fail = 0;
 const check = (name, ok, extra = "") => {
   if (!ok) fail++;
