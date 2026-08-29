@@ -1,0 +1,295 @@
+---
+import EsHero from "../components/es/EsHero.astro";
+import EsNav from "../components/es/EsNav.astro";
+import EsFooter from "../components/es/EsFooter.astro";
+import { ROUTES, SOCIAL, STRINGS } from "../i18n/site";
+import type { SiteLang } from "../i18n/site";
+import logo from "@assets/brand/cuban-trip-experience-logo.webp";
+import "../styles/es.css";
+
+// Composes the shell every Spanish page shares: the Astra theme header
+// (logo + social icons, transparent over the hero — not part of
+// `_elementor_data`, but present in every reference capture), the Elementor
+// hero (Section 1), the floating nav (Section 2), and the footer (last
+// section). Does not reuse `Layout.astro`, which hard-imports Inter,
+// `global.css`, and the English header/footer.
+export interface Props {
+  title: string;
+  description?: string;
+  heroTitle: string;
+  heroFull?: boolean;
+  showReserve?: boolean;
+  footerMenuTabletWidth?: string;
+  footerCopyright?: string;
+  footerLogoTabletWidth?: string;
+  /** Only the English home; see `EsFooter`'s `narrowGap`. */
+  footerNarrowGap?: boolean;
+  /** Language edition. Defaults to Spanish, so the eleven `/es/` pages are unchanged. */
+  lang?: SiteLang;
+  /** English `matanzas` and `pinar-del-rio` drop the Bookings footer link. */
+  dropBookingsLink?: boolean;
+}
+
+const {
+  title,
+  description = "Cuban Trip Experience",
+  heroTitle,
+  heroFull = false,
+  showReserve = true,
+  footerMenuTabletWidth,
+  footerCopyright,
+  footerLogoTabletWidth,
+  footerNarrowGap = false,
+  lang = "es",
+  dropBookingsLink = false,
+} = Astro.props;
+const t = STRINGS[lang];
+const routes = ROUTES[lang];
+
+const headerSocialLinks = [
+  {
+    label: "Facebook",
+    href: "https://www.facebook.com/profile.php?id=61551441593993",
+    path: "M400 32H48A48 48 0 0 0 0 80v352a48 48 0 0 0 48 48h137.25V327.69h-63V256h63v-54.64c0-62.15 37-96.48 93.67-96.48 27.14 0 55.52 4.84 55.52 4.84v61h-31.27c-30.81 0-40.42 19.12-40.42 38.73V256h68.78l-11 71.69h-57.78V480H400a48 48 0 0 0 48-48V80a48 48 0 0 0-48-48z",
+  },
+  {
+    label: "Instagram",
+    href: "https://www.instagram.com/cubantripexperience/",
+    path: "M224,202.66A53.34,53.34,0,1,0,277.36,256,53.38,53.38,0,0,0,224,202.66Zm124.71-41a54,54,0,0,0-30.41-30.41c-21-8.29-71-6.43-94.3-6.43s-73.25-1.93-94.31,6.43a54,54,0,0,0-30.41,30.41c-8.28,21-6.43,71.05-6.43,94.33S91,329.26,99.32,350.33a54,54,0,0,0,30.41,30.41c21,8.29,71,6.43,94.31,6.43s73.24,1.93,94.3-6.43a54,54,0,0,0,30.41-30.41c8.35-21,6.43-71.05,6.43-94.33S357.1,182.74,348.75,161.67ZM224,338a82,82,0,1,1,82-82A81.9,81.9,0,0,1,224,338Zm85.38-148.3a19.14,19.14,0,1,1,19.13-19.14A19.1,19.1,0,0,1,309.42,189.74ZM400,32H48A48,48,0,0,0,0,80V432a48,48,0,0,0,48,48H400a48,48,0,0,0,48-48V80A48,48,0,0,0,400,32ZM382.88,322c-1.29,25.63-7.14,48.34-25.85,67s-41.4,24.63-67,25.85c-26.41,1.49-105.59,1.49-132,0-25.63-1.29-48.26-7.15-67-25.85s-24.63-41.42-25.85-67c-1.49-26.42-1.49-105.61,0-132,1.29-25.63,7.07-48.34,25.85-67s41.47-24.56,67-25.78c26.41-1.49,105.59-1.49,132,0,25.63,1.29,48.33,7.15,67,25.85s24.63,41.42,25.85,67.05C384.37,216.44,384.37,295.56,382.88,322Z",
+  },
+  {
+    label: "WhatsApp",
+    href: "https://api.whatsapp.com/send?phone=5353788250",
+    path: "M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z",
+  },
+] as const;
+---
+
+<!doctype html>
+<html lang={routes.htmlLang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">{t.skipToContent}</a>
+    <div class="relative">
+      {/*
+        Astra transparent above-header, overlaid on the hero and outside the
+        document flow. The logo width is an Astra responsive setting
+        (116/87/65px) and its vertical inset is `1em`, so it follows the root
+        scale below 921px. The header social row is desktop-only — Astra's
+        mobile header renders the branding alone.
+      */}
+      {/* `pointer-events-none`: this transparent Astra header spans the whole
+          hero at z-30, above the floating nav, so without it the overlay
+          swallowed every click in that area — the burger, the nav links and
+          the Reservar button were all unclickable. Its own two children opt
+          back in. */}
+      <div class="pointer-events-none absolute inset-0 z-30">
+        <a
+          href={routes.home}
+          aria-label={`Cuban Trip Experience — ${t.titleSuffix}`}
+          class="pointer-events-auto absolute left-[50px] top-[1em]">
+          <img
+            src={logo.src}
+            width={logo.width}
+            height={logo.height}
+            alt="Cuban Trip Experience"
+            class="h-auto w-[116px] tablet:w-[87px] mobile:w-[65px]" />
+        </a>
+        <ul
+          class="pointer-events-auto absolute right-[20px] top-[42px] flex items-center gap-[8px] tablet:hidden"
+          aria-label={t.socialLabel}>
+          {
+            headerSocialLinks.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener"
+                  aria-label={link.label}
+                  class="flex h-[46px] w-[46px] items-center justify-center rounded-t-[50px] text-[#FFD100]">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 448 512"
+                    class="h-[34px] w-[34px]"
+                    fill="currentColor"
+                    aria-hidden="true">
+                    <path d={link.path} />
+                  </svg>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      {/* `inicio`'s Section 1 is the only hero that differs structurally: its
+          heading is an `h1` (Astra's 1.4 leading, not an h2's 1.25) and three
+          more widgets follow it. It supplies its own markup through this slot;
+          the other ten pages keep `EsHero`. */}
+      {
+        Astro.slots.has("hero") ? (
+          <slot name="hero" />
+        ) : (
+          <EsHero title={heroTitle} full={heroFull} />
+        )
+      }
+    </div>
+    <EsNav showReserve={showReserve} lang={lang} />
+    <main id="main-content"><slot /></main>
+    <EsFooter
+      menuTabletWidth={footerMenuTabletWidth}
+      copyright={footerCopyright}
+      logoTabletWidth={footerLogoTabletWidth}
+      narrowGap={footerNarrowGap}
+      lang={lang}
+      dropBookingsLink={dropBookingsLink}
+    />
+  </body>
+</html>
+
+<style is:global>
+  /*
+   * Elementor's entrance and hover animations, with the source's own keyframes
+   * and timings read off the live page (`reference/tools/_anim.mjs`):
+   * `.animated` is `1.25s ease`, and `elementor-animation-pulse` is
+   * `1s linear infinite` peaking at 1.1 and dipping to 0.9.
+   *
+   * Progressive enhancement, deliberately: the base state is VISIBLE. Only the
+   * script below marks an element idle, and only when it can observe it — so if
+   * the script never runs, nothing is left invisible. That also keeps the pixel
+   * gate honest: `shot.mjs` zeroes every animation duration, which lands a
+   * playing animation on its 100% frame (opacity 1, no transform), and an
+   * element that was never idled is already there.
+   */
+  @keyframes esFadeInUp {
+    from { opacity: 0; transform: translate3d(0, 100%, 0); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @keyframes esFadeInLeft {
+    from { opacity: 0; transform: translate3d(-100%, 0, 0); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @keyframes esFadeInRight {
+    from { opacity: 0; transform: translate3d(100%, 0, 0); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .es-anim-idle {
+    opacity: 0;
+  }
+
+  .es-anim-play {
+    animation-duration: 1.25s;
+    animation-timing-function: ease;
+    animation-fill-mode: both;
+  }
+
+  [data-anim="fadeInUp"].es-anim-play { animation-name: esFadeInUp; }
+  [data-anim="fadeInLeft"].es-anim-play { animation-name: esFadeInLeft; }
+  [data-anim="fadeInRight"].es-anim-play { animation-name: esFadeInRight; }
+
+  /* `hover_animation=pulse` — the footer social icons on all eleven pages. */
+  @keyframes esPulse {
+    25% { transform: scale(1.1); }
+    75% { transform: scale(0.9); }
+  }
+
+  .es-hover-pulse:hover,
+  .es-hover-pulse:focus-visible {
+    animation: esPulse 1s linear infinite;
+  }
+
+  /* `hover_animation=float` with `background_hover_transition=0.2`. */
+  .es-hover-float {
+    transition: transform 0.2s;
+  }
+
+  .es-hover-float:hover,
+  .es-hover-float:focus-visible {
+    transform: translateY(-8px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .es-anim-idle { opacity: 1; }
+    .es-anim-play { animation: none; }
+    .es-hover-pulse:hover,
+    .es-hover-pulse:focus-visible { animation: none; }
+    .es-hover-float { transition: none; }
+    .es-hover-float:hover,
+    .es-hover-float:focus-visible { transform: none; }
+  }
+</style>
+
+<script>
+  // Play each `data-anim` element once, when it first scrolls into view.
+  //
+  // A plain rAF-throttled scroll check rather than IntersectionObserver: IO
+  // delivers its callbacks asynchronously, and a fast programmatic scroll — the
+  // capture harness steps the whole page in 400px hops and jumps straight back
+  // to the top — can finish before the last element is ever reported, leaving it
+  // stuck at `opacity: 0`. A scroll handler runs on the frame, so the pass
+  // always catches it.
+  const targets = new Set(document.querySelectorAll<HTMLElement>("[data-anim]"));
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (targets.size && !reduced) {
+    // Only hide what is below the fold: anything already on screen would
+    // otherwise blink out before its animation starts.
+    for (const el of targets) {
+      if (el.dataset.animNow !== undefined) continue;
+      if (el.getBoundingClientRect().top > window.innerHeight) {
+        el.classList.add("es-anim-idle");
+      }
+    }
+
+    const play = (el: HTMLElement) => {
+      targets.delete(el);
+      el.classList.remove("es-anim-idle");
+      el.classList.add("es-anim-play");
+      // Strip the class once it has played. A live `animation` keeps the element
+      // on its own compositing layer, which switches its text from subpixel to
+      // greyscale antialiasing — a visible change with no animation left to
+      // justify it.
+      el.addEventListener(
+        "animationend",
+        () => el.classList.remove("es-anim-play"),
+        { once: true }
+      );
+    };
+
+    const sweep = () => {
+      for (const el of [...targets]) {
+        // 10% of the viewport, so a block starts moving just before its top edge
+        // clears the fold rather than after.
+        if (el.getBoundingClientRect().top < window.innerHeight * 0.9) play(el);
+      }
+      if (!targets.size) {
+        window.removeEventListener("scroll", sweep);
+        window.removeEventListener("resize", sweep);
+      }
+    };
+
+    // Synchronous, not rAF-throttled: a throttled sweep can be queued during a
+    // fast programmatic scroll and only run after the page has jumped back to
+    // the top, by which point the last blocks are below the fold again and stay
+    // hidden. A handful of `getBoundingClientRect` calls per scroll is cheap.
+    // `data-anim-now` is page chrome, not content that reveals on the way down.
+    // The floating nav sits at the very bottom of a 900px hero, so on any
+    // viewport shorter than that its box starts below the fold and the scroll
+    // sweep would hold it at `opacity: 0` until the visitor nudged the page —
+    // the animation firing on a stray scroll instead of on load.
+    for (const el of [...targets]) {
+      if (el.dataset.animNow !== undefined) play(el);
+    }
+
+    sweep();
+    window.addEventListener("scroll", sweep, { passive: true });
+    window.addEventListener("resize", sweep);
+  }
+</script>

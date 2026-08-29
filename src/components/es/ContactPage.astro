@@ -1,0 +1,75 @@
+---
+import EsLayout from "../../layouts/EsLayout.astro";
+import EsContactForm from "./EsContactForm.astro";
+import { CONTACT } from "../../data/contact";
+import type { SiteLang } from "../../i18n/site";
+
+// reference/<lang>/<contact page>/spec.md — Sections 3 and 4, identical across
+// all three editions (compared node by node), so only the copy differs and it
+// rides in from `src/data/contact.ts`.
+//
+// Section 3 is an Elementor section (padding 30/0/50/0, `content_width=1059px`)
+// holding one 100% column whose widget wrap carries Elementor's default 10px
+// padding, and inside it the white inner section (the card). The card's three
+// inner columns are 33.333% / 64.081% / 2.195%; the first is hidden at mobile
+// and the third is hidden everywhere else, so exactly one form renders per
+// breakpoint — which is why each edition authors its form heading twice, in
+// different casing.
+//
+// Section 4 is a bare spacer section on the same #EFF1F2 background (70px).
+export interface Props {
+  lang?: SiteLang;
+}
+
+const { lang = "es" } = Astro.props;
+const c = CONTACT[lang];
+---
+
+<EsLayout
+  title={c.title}
+  heroTitle={c.hero}
+  showReserve={true}
+  lang={lang}>
+  <section class="bg-[#EFF1F2] pb-[50px] pt-[30px]">
+    <div
+      class="mx-auto w-full max-w-[1059px] p-[10px] tablet:max-w-none tablet:py-0 tablet:pl-[20px] tablet:pr-0 mobile:px-[20px] mobile:py-0">
+      <div
+        class="flex rounded-[20px] border-b-[3px] border-r-[3px] border-[#5DBBFE91] bg-white shadow-[4px_5px_6px_0px_rgba(0,0,0,0.19)] mobile:flex-col">
+        <div class="basis-[33.333%] mobile:hidden">
+          <div class="mt-[50px] p-[10px]">
+            <h2
+              class="mb-[20px] pl-[20px] font-poppins text-[20px] font-semibold leading-[25px] text-black">
+              {c.formHeading}
+            </h2>
+            <EsContactForm idPrefix="ff_contact" strings={c.form} />
+          </div>
+        </div>
+
+        <div class="basis-[64.081%] mobile:basis-auto">
+          <div class="my-[50px] p-[10px] mobile:mb-0 mobile:mt-[20px] mobile:p-0">
+            <h2
+              class="mb-[20px] pl-[20px] font-poppins text-[20px] font-semibold leading-[25px] text-black mobile:pl-0 mobile:text-center">
+              {c.helpHeading}
+            </h2>
+            <div
+              class="es-copy px-[20px] tablet:pl-[20px] tablet:pr-0 mobile:px-[10px]"
+              set:html={c.body}>
+</div>
+          </div>
+        </div>
+
+        <div class="hidden mobile:block">
+          <div class="mb-[20px] mt-[-10px] p-[10px]">
+            <h2
+              class="mb-[20px] font-poppins text-[20px] font-semibold leading-[25px] text-black">
+              {c.formHeadingMobile}
+            </h2>
+            <EsContactForm idPrefix="ff_contact_m" strings={c.form} />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="h-[70px] bg-[#EFF1F2]" aria-hidden="true"></div>
+</EsLayout>

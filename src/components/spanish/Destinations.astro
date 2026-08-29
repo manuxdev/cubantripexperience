@@ -1,0 +1,149 @@
+---
+import { spanishDestinations as destinations } from "../../i18n/content/es/destinos";
+---
+
+<a class="es-skip-link" href="#contenido">Ir al contenido</a>
+<header class="es-site-header es-destinations-header">
+  <div class="es-topbar">
+    <a class="es-brand" href="/es/" aria-label="Cuban Trip Experience, portada">
+      <img src="/home/logo.webp" alt="Cuban Trip Experience" width="116" height="98" />
+    </a>
+    <div class="es-top-social" aria-label="Redes sociales">
+      <a href="https://www.facebook.com/profile.php?id=61551441593993" target="_blank" rel="noreferrer" aria-label="Facebook">f</a>
+      <a href="https://www.instagram.com/cubantripexperience/" target="_blank" rel="noreferrer" aria-label="Instagram">◎</a>
+      <a href="https://api.whatsapp.com/send?phone=5353788250" target="_blank" rel="noreferrer" aria-label="WhatsApp">◔</a>
+    </div>
+  </div>
+  <div class="es-nav-wrap" data-destinations-nav>
+    <div class="es-nav-inner">
+      <button class="es-menu-toggle" type="button" aria-expanded="false" aria-controls="es-destinations-menu" data-menu-toggle>
+        <span class="sr-only">Abrir menú</span><span aria-hidden="true">☰</span>
+      </button>
+      <nav id="es-destinations-menu" aria-label="Menú principal" data-menu>
+        {destinations.navigation.map((item) => <a href={item.href} aria-current={item.href === "/es/destinos/" ? "page" : undefined}>{item.label}</a>)}
+      </nav>
+      <a class="es-book-button" href={destinations.booking.href}>{destinations.booking.label}</a>
+      <label class="es-language"><span class="sr-only">Idioma</span>
+        <select data-language-select aria-label="Idioma">
+          {destinations.languages.map((language) => <option value={language.href}>{language.label}</option>)}
+        </select>
+      </label>
+    </div>
+  </div>
+</header>
+
+<main id="contenido">
+  <section class="es-destinations-hero" aria-labelledby="destinations-title">
+    <h1 id="destinations-title">{destinations.title}</h1>
+  </section>
+
+  <section class="es-destinations-intro" aria-label={destinations.intro}>
+    <p>{destinations.intro}</p>
+    <h2>{destinations.popularTitle}</h2>
+  </section>
+
+  <section class="es-destination-list" aria-label={destinations.popularTitle}>
+    {destinations.destinations.map((destination, destinationIndex) => (
+      <article class:list={["es-destination-row", destination.imageOnRight && "is-image-right"]}>
+        <div class="es-destination-carousel" data-destination-carousel aria-roledescription="carrusel" aria-label={destination.title} tabindex="0">
+          <div class="es-destination-viewport">
+            {destination.slides.map((slide, index) => (
+              <img
+                class:list={["es-destination-slide", index === 0 && "is-active"]}
+                src={slide}
+                alt=""
+                width="612"
+                height="612"
+                loading={destinationIndex === 0 && index === 0 ? "eager" : "lazy"}
+                aria-hidden={index === 0 ? "false" : "true"}
+              />
+            ))}
+          </div>
+          <button class="es-destination-arrow es-destination-prev" type="button" data-carousel-prev aria-label={`Imagen anterior de ${destination.title}`}>‹</button>
+          <button class="es-destination-arrow es-destination-next" type="button" data-carousel-next aria-label={`Siguiente imagen de ${destination.title}`}>›</button>
+          <div class="es-destination-dots" role="tablist" aria-label={`Seleccionar imagen de ${destination.title}`}>
+            {destination.slides.map((_, index) => <button type="button" role="tab" aria-label={`Ver imagen ${index + 1} de ${destination.title}`} aria-selected={index === 0 ? "true" : "false"} data-carousel-dot={index}></button>)}
+          </div>
+        </div>
+        <div class="es-destination-copy">
+          <h2>{destination.title}</h2>
+          <p>{destination.body}</p>
+          <a href={destination.href}>{destination.cta} <span aria-hidden="true">›</span></a>
+        </div>
+      </article>
+    ))}
+  </section>
+</main>
+
+<footer class="es-footer">
+  <div class="es-footer-inner">
+    <a class="es-footer-brand" href="/es/" aria-label="Cuban Trip Experience, portada">
+      <img src="/es/destinos/my-project-1-5-removebg-preview-e1689543311722.webp" alt="Cuban Trip Experience" width="116" height="98" loading="lazy" />
+    </a>
+    <p>{destinations.footer.copyright}</p>
+    <nav aria-label="Enlaces del pie de página">{destinations.footer.navigation.map((item) => <a href={item.href}>{item.label}</a>)}</nav>
+    <div class="es-footer-social">
+      <a href="mailto:cubantripexperience@gmail.com" aria-label="Correo electrónico">✉</a>
+      <a href="https://www.facebook.com/profile.php?id=61551441593993" target="_blank" rel="noreferrer" aria-label="Facebook">f</a>
+      <a href="https://www.instagram.com/cubantripexperience/" target="_blank" rel="noreferrer" aria-label="Instagram">◎</a>
+      <a href="https://wa.me/+5353788250/" target="_blank" rel="noreferrer" aria-label="WhatsApp">◔</a>
+    </div>
+  </div>
+</footer>
+<button class="es-scroll-top" type="button" data-scroll-top aria-label="Volver arriba">↑</button>
+
+<script>
+  const menuToggle = document.querySelector<HTMLButtonElement>("[data-menu-toggle]");
+  const menu = document.querySelector<HTMLElement>("[data-menu]");
+  const nav = document.querySelector<HTMLElement>("[data-destinations-nav]");
+  const language = document.querySelector<HTMLSelectElement>("[data-language-select]");
+  const scrollTop = document.querySelector<HTMLButtonElement>("[data-scroll-top]");
+
+  menuToggle?.addEventListener("click", () => {
+    const open = menuToggle.getAttribute("aria-expanded") !== "true";
+    menuToggle.setAttribute("aria-expanded", String(open));
+    menu?.classList.toggle("is-open", open);
+  });
+
+  language?.addEventListener("change", () => window.location.assign(language.value));
+
+  document.querySelectorAll<HTMLElement>("[data-destination-carousel]").forEach((carousel) => {
+    const slides = [...carousel.querySelectorAll<HTMLElement>(".es-destination-slide")];
+    const dots = [...carousel.querySelectorAll<HTMLButtonElement>("[data-carousel-dot]")];
+    let active = 0;
+    let timer: number | undefined;
+    const show = (index: number) => {
+      active = (index + slides.length) % slides.length;
+      slides.forEach((slide, slideIndex) => {
+        const selected = slideIndex === active;
+        slide.classList.toggle("is-active", selected);
+        slide.setAttribute("aria-hidden", String(!selected));
+      });
+      dots.forEach((dot, dotIndex) => dot.setAttribute("aria-selected", String(dotIndex === active)));
+    };
+    const restart = () => {
+      window.clearInterval(timer);
+      timer = window.setInterval(() => show(active + 1), 7000);
+    };
+    carousel.querySelector("[data-carousel-prev]")?.addEventListener("click", () => { show(active - 1); restart(); });
+    carousel.querySelector("[data-carousel-next]")?.addEventListener("click", () => { show(active + 1); restart(); });
+    dots.forEach((dot, index) => dot.addEventListener("click", () => { show(index); restart(); }));
+    carousel.addEventListener("mouseenter", () => window.clearInterval(timer));
+    carousel.addEventListener("mouseleave", restart);
+    carousel.addEventListener("focusin", () => window.clearInterval(timer));
+    carousel.addEventListener("focusout", restart);
+    carousel.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft") { event.preventDefault(); show(active - 1); restart(); }
+      if (event.key === "ArrowRight") { event.preventDefault(); show(active + 1); restart(); }
+    });
+    restart();
+  });
+
+  const updateScrollState = () => {
+    scrollTop?.classList.toggle("is-visible", window.scrollY > 100);
+    nav?.classList.toggle("is-stuck", window.scrollY >= 252);
+  };
+  window.addEventListener("scroll", updateScrollState, { passive: true });
+  scrollTop?.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+  updateScrollState();
+</script>

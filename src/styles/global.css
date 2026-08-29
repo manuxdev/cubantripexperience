@@ -1,0 +1,64 @@
+:root {
+  --color-ink: #111111;
+  --color-gold: #f2cb0f;
+  --color-sand: #f8f5eb;
+  --color-paper: #ffffff;
+  --color-muted: #5f5a50;
+  --font-body: "Inter Variable", "Inter", system-ui, sans-serif;
+  --content-width: 72rem;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 20rem;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  line-height: 1.5;
+}
+
+::selection {
+  background: var(--color-gold);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-gold);
+  outline-offset: 3px;
+}
+
+a {
+  color: inherit;
+}
+
+img {
+  content-visibility: auto;
+}
+
+.skip-link {
+  position: fixed;
+  z-index: 100;
+  top: 1rem;
+  left: 1rem;
+  transform: translateY(-200%);
+  padding: 0.75rem 1rem;
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+.page-container {
+  width: min(var(--content-width), calc(100% - 2rem));
+  margin-inline: auto;
+}
+
+.prose-width {
+  max-width: 70ch;
+}

@@ -1,0 +1,17 @@
+---
+import DestinationDetail from "../../../components/es/DestinationDetail.astro";
+import { destinations } from "../../../data/ru/destinations";
+
+// reference/ru/<slug>/spec.md — same skeleton, generated content. Russian has no
+// Pinar del Río page, so this edition has five detail pages, not six.
+export function getStaticPaths() {
+  return destinations.map((destination) => ({
+    params: { slug: destination.slug },
+    props: { destination },
+  }));
+}
+
+const { destination } = Astro.props;
+---
+
+<DestinationDetail destination={destination} lang="ru" />

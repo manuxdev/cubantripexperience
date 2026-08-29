@@ -1,0 +1,28 @@
+---
+import DestinationDetail from "../../components/es/DestinationDetail.astro";
+import { destinations } from "../../data/en/destinations";
+
+// reference/en/<slug>/spec.md — the same eight-section skeleton the Spanish and
+// Russian editions use, so it renders through the shared component. Content and
+// per-page geometry are generated from the source's own Elementor JSON by
+// `reference/tools/gen-destinations.py en`.
+//
+// `matanzas` and `pinar-del-rio` are the two English pages whose menu drops the
+// Bookings item — a per-page difference in the source.
+const DROPS_BOOKINGS = new Set(["matanzas", "pinar-del-rio"]);
+
+export function getStaticPaths() {
+  return destinations.map((destination) => ({
+    params: { slug: destination.slug },
+    props: { destination },
+  }));
+}
+
+const { destination } = Astro.props;
+---
+
+<DestinationDetail
+  destination={destination}
+  lang="en"
+  dropBookingsLink={DROPS_BOOKINGS.has(destination.slug)}
+/>

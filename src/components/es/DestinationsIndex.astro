@@ -1,0 +1,391 @@
+---
+import EsLayout from "../../layouts/EsLayout.astro";
+import type { EsDestinationBlock } from "../../data/es/destination-index";
+import { STRINGS } from "../../i18n/site";
+import type { SiteLang } from "../../i18n/site";
+
+// reference/<lang>/<destinations page>/spec.md — Sections 3 to 18, identical
+// across all three editions (compared node by node), so the blocks and the two
+// headings ride in as content.
+//
+// Measured against the live source at 1440px: every destination block is exactly
+// 362px tall — the carousel's 342px plus the widget wrap's 20px of padding — so
+// the carousel, not the text, sets the row height and the text column is
+// `content_position=center` inside it. The spacers between blocks are
+// Elementor's 50px default plus that same 20px.
+export interface Props {
+  blocks: EsDestinationBlock[];
+  content: { title: string; hero: string; intro: string; popular: string };
+  lang?: SiteLang;
+}
+
+const { blocks, content, lang = "es" } = Astro.props;
+const t = STRINGS[lang];
+
+const ANGLE_LEFT =
+  "M31.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L127.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L201.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34z";
+const ANGLE_RIGHT =
+  "M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6 0 34z";
+---
+
+<EsLayout
+  title={content.title}
+  heroTitle={content.hero}
+  showReserve={true}
+  lang={lang}>
+  {/* Section 3 — spacer (27px) */}
+  <div class="mx-auto max-w-[1140px] p-[10px]">
+    <div class="h-[27px]" aria-hidden="true"></div>
+  </div>
+
+  {/* Section 4 — intro heading */}
+  <section>
+    <div class="mx-auto max-w-[1140px] p-[10px] tablet:max-w-[753px]">
+      <h2
+        class="text-center font-poppins text-[22px] font-semibold leading-[27.5px] text-[#454A4D] mobile:text-[14px] mobile:leading-[17.5px]">
+        {content.intro}
+      </h2>
+    </div>
+  </section>
+
+  {/* Section 5 — spacer (10px) */}
+  <div class="mx-auto max-w-[1140px] p-[10px]">
+    <div class="h-[10px]" aria-hidden="true"></div>
+  </div>
+
+  {/* Section 6 — "Lugares Populares" */}
+  <section>
+    <div class="mx-auto max-w-[1140px] p-[10px]">
+      <h2
+        class="text-center font-poppins text-[34px] font-semibold leading-[42.5px] text-[#F1DC1B] mobile:text-[28px] mobile:leading-[35px]">
+        {content.popular}
+      </h2>
+    </div>
+  </section>
+
+  {
+    blocks.map((block, i) => (
+      <>
+        {/* Sections 7 / 9 / 11 / 13 / 15 / 17 — destination block. The source
+            alternates the entrance: the text-first blocks come in from the
+            left, the carousel-first ones from the right. */}
+        <section data-anim={block.textFirst ? "fadeInLeft" : "fadeInRight"}>
+          <div
+            class="es-blk mx-auto flex max-w-[1140px] mobile:flex-col"
+            style={`--text-basis:${block.textBasis}%;--media-basis:${block.mediaBasis}%;--tablet-basis:${block.tabletBasis ?? 0}%`}>
+            <div
+              class:list={[
+                "es-blk-text flex flex-col justify-center p-[10px]",
+                block.textFirst ? "order-1" : "order-2",
+                "mobile:order-2",
+              ]}>
+              <h2
+                class:list={[
+                  "mb-[20px] font-poppins text-[32px] font-semibold leading-[40px] text-[#465155] tablet:text-[25px] tablet:leading-[31.25px] mobile:ml-[10px]",
+                  block.textFirst ? "tablet:ml-[20px]" : "",
+                ]}>
+                {block.title}
+              </h2>
+              <div
+                class:list={[
+                  "es-copy mb-[20px] mobile:mx-[10px]",
+                  block.textFirst ? "tablet:ml-[20px]" : "tablet:mr-[20px]",
+                ]}
+                set:html={
+                  block.bodyParagraph ? `<p>${block.body}</p>` : block.body
+                }
+              />
+              {/* Two wrappers, like the source: `_margin` lands on Elementor's
+                  inner `.elementor-widget-container`, not on the flex item. A
+                  -30px inner margin therefore pulls the anchor above its own
+                  box and the outer item's auto height clamps to 0, so the
+                  button overhangs the paragraph instead of shortening the
+                  column. Putting the margin on the item itself makes the whole
+                  block 30px short. */}
+              <div class="es-blk-btn mobile:ml-[10px]">
+                <div
+                  class="es-blk-btn-inner leading-[1.6em]"
+                  style={`--btn-mt:${block.buttonMarginTop ?? 0}px;--btn-mt-mobile:${block.buttonMarginTopMobile ?? block.buttonMarginTop ?? 0}px`}>
+                  <a
+                  class="inline-flex items-center gap-[5px] font-poppins text-[17px] font-medium leading-[1em] text-[#3A3838] hover:text-[#E9D628]"
+                  href={block.href}>
+                    <span>{block.buttonText}</span>
+                    <svg
+                      viewBox="0 0 256 512"
+                      class="h-[1em] w-[0.5em] shrink-0"
+                      fill="currentColor"
+                      aria-hidden="true">
+                      <path d={ANGLE_RIGHT} />
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class:list={[
+                "es-blk-media flex flex-col justify-center p-[10px]",
+                block.textFirst ? "order-2" : "order-1",
+                "mobile:order-1",
+              ]}>
+              {/* The arrows are absolutely positioned 10px inside the widget
+                  box, not inside the image: at desktop the 84%-wide slide is
+                  centred, which leaves them clear of the rounded corners, and
+                  at tablet the 375px slide is wider than its own 354px widget
+                  and overflows past them. */}
+              <div class="es-carousel-widget relative" data-carousel>
+                <div class="es-carousel relative mx-auto cursor-grab touch-pan-y select-none">
+                  {block.slides.map((slide, s) => (
+                    <img
+                      class:list={[
+                        "es-carousel-img absolute inset-0 block h-full w-full rounded-[26px] object-cover",
+                        s === 0 ? "" : "opacity-0",
+                      ]}
+                      data-slide={s}
+                      src={slide.image.src}
+                      width={slide.image.width}
+                      height={slide.image.height}
+                      alt={slide.alt}
+                      aria-hidden={s === 0 ? undefined : "true"}
+                    />
+                  ))}
+                  {/* Hover caption. Hidden at rest, so it never appears in a
+                      reference capture: `opacity-0` until the carousel is
+                      hovered or focused within. The text is the source's own
+                      media-library alt, e.g. "Viñales Valley, Pinar del Rio
+                      Cuba". */}
+                  <div
+                    class="es-carousel-caption pointer-events-none absolute inset-0 flex items-center justify-center rounded-[26px] bg-black/45 px-[24px] text-center opacity-0 transition-opacity duration-200"
+                    aria-hidden="true">
+                    <span
+                      class="es-carousel-caption-text font-poppins text-[20px] font-semibold leading-[1.3] text-white mobile:text-[16px]">
+                      {block.slides[0].alt}
+                    </span>
+                  </div>
+                  <div
+                    class="absolute inset-x-0 bottom-[16px] flex justify-center gap-[6px]"
+                    role="tablist"
+                    aria-label={`${t.galleryOf} ${block.title.trim()}`}>
+                    {block.slides.map((slide, s) => (
+                      <button
+                        type="button"
+                        data-dot={s}
+                        role="tab"
+                        aria-selected={s === 0 ? "true" : "false"}
+                        aria-label={slide.alt}
+                        class:list={[
+                          "block h-[7px] w-[7px] rounded-full",
+                          s === 0 ? "bg-[#F8F43D]" : "bg-white",
+                        ]}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  data-prev
+                  aria-label={t.previousPhoto}
+                  class="es-carousel-arrow left-[10px]"
+                />
+                <button
+                  type="button"
+                  data-next
+                  aria-label={t.nextPhoto}
+                  class="es-carousel-arrow es-carousel-arrow-next right-[10px]"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Sections 8 / 10 / 12 / 14 / 16 / 18 — spacer */}
+        <div class="mx-auto max-w-[1140px] p-[10px]">
+          <div
+            class:list={[
+              "h-[50px]",
+              // Sections 10, 12 and 16 author `space_mobile=10px`; 18 authors
+              // `space_tablet=68px`. The rest keep Elementor's 50px default.
+              [1, 2, 4].includes(i) ? "mobile:h-[10px]" : "",
+              i === 5 ? "tablet:h-[68px]" : "",
+            ]}
+            aria-hidden="true"
+          />
+        </div>
+      </>
+    ))
+  }
+</EsLayout>
+
+<script>
+  // Click- and drag-driven only: the source autoplays, but a moving slider would
+  // make every capture a race — `shot.mjs` has to stop the source's own autoplay
+  // for exactly that reason. Arrows, dots and a swipe move it; nothing moves on
+  // its own.
+  for (const root of document.querySelectorAll<HTMLElement>("[data-carousel]")) {
+    const slides = [...root.querySelectorAll<HTMLElement>("[data-slide]")];
+    const dots = [...root.querySelectorAll<HTMLElement>("[data-dot]")];
+    const caption = root.querySelector<HTMLElement>(".es-carousel-caption-text");
+    if (slides.length < 2) continue;
+    let current = 0;
+
+    const show = (next: number) => {
+      current = (next + slides.length) % slides.length;
+      slides.forEach((slide, i) => {
+        slide.classList.toggle("opacity-0", i !== current);
+        if (i === current) slide.removeAttribute("aria-hidden");
+        else slide.setAttribute("aria-hidden", "true");
+      });
+      dots.forEach((dot, i) => {
+        dot.classList.toggle("bg-[#F8F43D]", i === current);
+        dot.classList.toggle("bg-white", i !== current);
+        dot.setAttribute("aria-selected", i === current ? "true" : "false");
+      });
+      if (caption) caption.textContent = slides[current].getAttribute("alt") ?? "";
+    };
+
+    root.querySelector("[data-prev]")?.addEventListener("click", () => show(current - 1));
+    root.querySelector("[data-next]")?.addEventListener("click", () => show(current + 1));
+    dots.forEach((dot, i) => dot.addEventListener("click", () => show(i)));
+
+    // Swipe / drag. `touch-pan-y` on the track lets the browser keep vertical
+    // scrolling while we claim the horizontal axis, so a swipe down the page
+    // still scrolls instead of fighting the carousel.
+    const surface = root.querySelector<HTMLElement>(".es-carousel") ?? root;
+    let startX = 0;
+    let dragging = false;
+    surface.addEventListener("pointerdown", (event: PointerEvent) => {
+      if (event.button !== 0) return;
+      dragging = true;
+      startX = event.clientX;
+      surface.classList.replace("cursor-grab", "cursor-grabbing");
+    });
+    const endDrag = (event: PointerEvent) => {
+      if (!dragging) return;
+      dragging = false;
+      surface.classList.replace("cursor-grabbing", "cursor-grab");
+      const dx = event.clientX - startX;
+      // 40px, so a tap on a dot or a slightly shaky click never counts as a swipe.
+      if (Math.abs(dx) > 40) show(current + (dx < 0 ? 1 : -1));
+    };
+    surface.addEventListener("pointerup", endDrag);
+    surface.addEventListener("pointercancel", () => {
+      dragging = false;
+      surface.classList.replace("cursor-grabbing", "cursor-grab");
+    });
+    surface.addEventListener("dragstart", (event) => event.preventDefault());
+  }
+</script>
+
+<style>
+  /* Elementor column geometry, driven by the per-block custom properties set
+     inline above. `matanzas` is the one block that authors `_inline_size_tablet`
+     (50/50); every other block keeps its desktop split at tablet. */
+  /* `flex-shrink: 0` because Elementor columns do not shrink: at tablet the
+     375px swiper is wider than its 354px column, so the source overflows the
+     viewport to a 779px scroll width instead of squeezing the text column.
+     Letting these shrink re-wraps every paragraph and the whole page drifts. */
+  .es-blk-text {
+    flex-basis: var(--text-basis);
+    flex-shrink: 0;
+    /* `min-width: 0` so the column stays at its basis and the oversized swiper
+       overflows past it, exactly as Elementor's fixed-width columns do. The
+       flex default (`auto`) would let the carousel widen its own column. */
+    min-width: 0;
+  }
+
+  .es-blk-media {
+    flex-basis: var(--media-basis);
+    flex-shrink: 0;
+    min-width: 0;
+  }
+
+  @media (min-width: 768px) and (max-width: 1024px) {
+    .es-blk[style*="--tablet-basis:50%"] .es-blk-text,
+    .es-blk[style*="--tablet-basis:50%"] .es-blk-media {
+      flex-basis: 50%;
+    }
+  }
+
+  /* `widget:button` `_margin`. `pinar-del-rio` pulls its button up 30px, which
+     is measured against the `1.6em` line box the anchor sits in. */
+  .es-blk-btn-inner {
+    margin-top: var(--btn-mt);
+  }
+
+  @media (max-width: 767px) {
+    .es-blk-btn-inner {
+      margin-top: var(--btn-mt-mobile);
+    }
+  }
+
+  /* `media-carousel`: `height=342px`, `width=84%` of the widget box, centred —
+     which is why the arrows clear the rounded image instead of overlapping it.
+     Tablet and mobile swap the percentage for a literal px width. */
+  .es-carousel {
+    height: 342px;
+    width: 84%;
+  }
+
+  /* `es.css` sets `img { content-visibility: auto }`. Six full-width photos on a
+     3216px page means Chrome skips painting the last two, and `fullPage`
+     captures them blank — a code defect that looks like a missing image.
+     Scoped opt-out; `es.css` is frozen and stays untouched. */
+  .es-carousel-img {
+    content-visibility: visible;
+  }
+
+  @media (max-width: 1024px) {
+    .es-carousel {
+      height: 248px;
+      width: 375px;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .es-carousel {
+      width: 320px;
+    }
+  }
+
+  /* `arrows_color=#5DBBFE`, `arrows_size=25px`. Elementor draws these as an
+     icon font chevron; a bordered square rotated 45deg reproduces the same
+     stroke at the same weight without loading the font. */
+  /* `arrows_color=#5DBBFE`, `arrows_size=25px`: a 25x25 box holding an eicon
+     chevron. A bordered square rotated 45deg draws the same stroke without
+     loading the icon font. */
+  /* Only reveal the caption on real hover — `@media (hover: hover)` keeps it off
+     touch screens, where every tap would otherwise leave it stuck on. */
+  @media (hover: hover) {
+    .es-carousel:hover .es-carousel-caption {
+      opacity: 1;
+    }
+  }
+
+  .es-carousel:focus-within .es-carousel-caption {
+    opacity: 1;
+  }
+
+  .es-carousel-arrow {
+    position: absolute;
+    top: 50%;
+    width: 25px;
+    height: 25px;
+    transform: translateY(-50%);
+  }
+
+  .es-carousel-arrow::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 11px;
+    height: 11px;
+    border-top: 2px solid #5dbbfe;
+    border-left: 2px solid #5dbbfe;
+    transform: translate(-25%, -50%) rotate(-45deg);
+  }
+
+  .es-carousel-arrow-next::before {
+    transform: translate(-75%, -50%) rotate(135deg);
+  }
+</style>

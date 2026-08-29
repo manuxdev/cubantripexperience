@@ -1,0 +1,52 @@
+---
+// Fluent Form "Quejas y sugerencias Español" (form 9), read from
+// `reference/es/contactos/rendered.html`: first name, email, message, submit.
+// The source renders it with `hide-fluent-form-labels`, so the visible field
+// name is the placeholder; `aria-label` carries the accessible name because a
+// placeholder is not one.
+// Each field group carries the source's 20px bottom margin, including the last
+// one — that trailing margin is part of the widget's measured 298px height.
+//
+// Visual only: no `action`, no endpoint, no submit handler (proposal.md
+// Non-goals — "no booking backend").
+import type { ContactContent } from "../../data/contact";
+
+export interface Props {
+  strings: ContactContent["form"];
+  idPrefix: string;
+}
+
+const { idPrefix, strings } = Astro.props;
+---
+
+<form>
+  <div class="mb-[20px]">
+    <input
+      type="text"
+      name="names[first_name]"
+      id={`${idPrefix}_names_first_name`}
+      placeholder={strings.name}
+      aria-label={strings.nameLabel}
+      class="es-field" />
+  </div>
+  <div class="mb-[20px]">
+    <input
+      type="email"
+      name="email"
+      id={`${idPrefix}_email`}
+      placeholder={strings.email}
+      aria-label={strings.emailLabel}
+      class="es-field" />
+  </div>
+  <div class="mb-[20px]">
+    <textarea
+      name="message"
+      id={`${idPrefix}_message`}
+      placeholder={strings.message}
+      aria-label={strings.messageLabel}
+      class="es-field"></textarea>
+  </div>
+  <div class="mb-[20px]">
+    <button type="submit" class="es-submit">{strings.submit}</button>
+  </div>
+</form>

@@ -6,16 +6,20 @@ import sitemap from "@astrojs/sitemap";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://astroship.web3templates.com",
+  // The canonical origin, not the deploy origin: a Vercel preview must still
+  // point search engines at the real domain, never at its own *.vercel.app.
+  site: "https://cubantripexperience.com",
   integrations: [
     tailwind(),
     image({
       serviceEntryPoint: "@astrojs/image/sharp",
     }),
     mdx(),
-    sitemap(),
+    // The booking confirmation is reached only by submitting the form, and says
+    // nothing without the `?ref` the submit puts there. Indexing it would offer
+    // searchers an empty thank-you page.
+    sitemap({
+      filter: (page) => !/\/(reserva-confirmada|booking-confirmed|bronirovanie-podtverzhdeno)\/?$/.test(page),
+    }),
   ],
-  experimental: {
-    viewTransitions: true,
-  },
 });

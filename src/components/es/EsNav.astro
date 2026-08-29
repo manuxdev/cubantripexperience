@@ -1,0 +1,207 @@
+---
+import EsLangSwitcher from "./EsLangSwitcher.astro";
+import { ROUTES, STRINGS, navLinks } from "../../i18n/site";
+import type { SiteLang } from "../../i18n/site";
+
+// Section 2 across every Spanish page except `reservar` (`showReserve=false`
+// there — no Reservar button on its own page). Floating nav: the section's
+// negative margin pulls the gradient column up over the hero.
+//
+// Row height is set by the menu list, not by the column: the source `ul` keeps
+// Elementor's `margin: 1em 0` around a 24px row, so the column is
+// 16 + 24 + 16 + 20 = 76px at 1440px and 14.592 + 24 + 14.592 + 20 = 73px once
+// Astra's root scale applies below 921px. Reproducing the `1em` margin is what
+// makes the tablet row shrink by exactly the source's 3px.
+export interface Props {
+  showReserve?: boolean;
+  lang?: SiteLang;
+}
+
+const {
+  showReserve = true,
+  lang = "es",
+} = Astro.props;
+const links = navLinks(lang);
+const t = STRINGS[lang];
+const routes = ROUTES[lang];
+const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
+const isActive = (href: string) => currentPath === href.replace(/\/$/, "");
+
+const reserveClass =
+  "inline-block shrink-0 rounded-[3px] bg-es-cta px-[24px] py-[12px] " +
+  "font-poppins text-[15px] font-medium leading-[15px] text-white " +
+  "[text-shadow:0_0_10px_rgba(0,0,0,0.3)] hover:bg-es-ctaHover hover:text-black";
+---
+
+<nav aria-label={t.menuLabel} class="relative z-20 -mt-[76px] mobile:-mt-[60px]">
+  {/* `animation=fadeInUp` on the source's column, on all eleven pages. */}
+  <div
+    data-anim="fadeInUp"
+    data-anim-now
+    class="mx-auto flex max-w-[1140px] items-center justify-center rounded-[8px] bg-[linear-gradient(#3F3F3FCF_43%,#5F5F5F)] p-[10px] shadow-[3px_4px_10px_0px_rgba(0,0,0,0.5)] mobile:justify-between">
+    <ul class="my-[1em] flex pl-[40px] font-poppins mobile:hidden">
+      {
+        links.map((link) => (
+          <li class="flex">
+            <a
+              href={link.href}
+              aria-current={isActive(link.href) ? "page" : undefined}
+              class:list={[
+                "es-nav-item relative block px-[13px] py-[2px] text-[1rem] font-semibold leading-[20px]",
+                isActive(link.href)
+                  ? "es-nav-item-active text-[#CFC725]"
+                  : "text-white hover:text-es-link",
+              ]}>
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <button
+      type="button"
+      id="es-nav-toggle"
+      aria-label={t.openMenu}
+      data-open={t.openMenu}
+      data-close={t.closeMenu}
+      aria-expanded="false"
+      aria-controls="es-nav-dropdown"
+      class="hidden h-[33px] w-[33px] items-center justify-center bg-black/5 p-[5.5px] text-[#C3C96D] mobile:flex">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        class="h-[22px] w-[22px]"
+        fill="currentColor"
+        aria-hidden="true">
+        <rect x="2" y="5" width="20" height="2"></rect>
+        <rect x="2" y="11" width="20" height="2"></rect>
+        <rect x="2" y="17" width="20" height="2"></rect>
+      </svg>
+    </button>
+
+    {
+      showReserve && (
+        <a href={routes.booking} class:list={["ml-[20px] mobile:ml-0", reserveClass]}>
+          {t.reserve}
+        </a>
+      )
+    }
+
+    {/*
+      Third slot of Section 2: `widget:polylang-language-switcher`. It was an
+      inert box while only the Spanish edition existed; now that all three do, it
+      is the real control, built to the source's measured geometry.
+    */}
+    <EsLangSwitcher lang={lang} />
+  </div>
+
+  {/*
+    The burger's dropdown. `full_width=stretch` on the source's nav-menu widget,
+    so the panel spans the viewport rather than the 1140px container; measured
+    open on the source at 390px: `#DADADA`, `0 0 10px 10px`, items 40px tall at
+    `10px 20px`, Poppins 13px/20px weight 500, `#33373D`, no underline.
+
+    Closed on load — `hidden` — which is the state every reference capture is in,
+    so wiring it changes no measured pixel.
+  */}
+  <div
+    id="es-nav-dropdown"
+    class="absolute inset-x-0 top-full z-30 hidden rounded-b-[10px] bg-[#DADADA] py-[13px] mobile:block mobile:data-[open=false]:hidden"
+    data-open="false">
+    <ul class="font-poppins">
+      {
+        links.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              aria-current={isActive(link.href) ? "page" : undefined}
+              class:list={[
+                "block px-[20px] py-[10px] text-[13px] font-medium leading-[20px] no-underline",
+                isActive(link.href) ? "text-[#5F5E5C]" : "text-[#33373D]",
+              ]}>
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+      <li>
+        <a
+          href={routes.booking}
+          class="block px-[20px] py-[10px] text-[13px] font-medium leading-[20px] text-[#33373D] no-underline">
+          {t.reserve}
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<script>
+  const toggle = document.getElementById("es-nav-toggle");
+  const dropdown = document.getElementById("es-nav-dropdown");
+  if (toggle && dropdown) {
+    const setOpen = (open: boolean) => {
+      dropdown.dataset.open = String(open);
+      toggle.setAttribute("aria-expanded", String(open));
+      toggle.setAttribute(
+        "aria-label",
+        open ? toggle.dataset.close ?? "" : toggle.dataset.open ?? ""
+      );
+    };
+    toggle.addEventListener("click", () =>
+      setOpen(dropdown.dataset.open !== "true")
+    );
+    // A tap outside or Escape closes it; without this the panel covers the page
+    // on a phone with no way back.
+    document.addEventListener("click", (event) => {
+      if (dropdown.dataset.open !== "true") return;
+      const target = event.target as Node;
+      if (!dropdown.contains(target) && !toggle.contains(target)) setOpen(false);
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") setOpen(false);
+    });
+  }
+</script>
+
+<style>
+  /*
+   * `pointer_width=2px`, `e--pointer-underline` and `e--animation-slide` on the
+   * source's nav-menu widget: the underline is a 2px bar that, at rest, is
+   * parked 10px wide off the item's trailing edge and slides across on hover.
+   * The active item keeps it fully drawn, which is the state every reference
+   * capture is in.
+   */
+  .es-nav-item::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    height: 2px;
+    background-color: #cfc725;
+    inset-inline-start: 100%;
+    width: 10px;
+    /* Hidden at rest by opacity, not just by position: the 10px stub is parked
+       past the item's trailing edge and would otherwise be a visible dash
+       floating next to every menu item — confirmed on the source, whose
+       `::after` computes to `opacity: 0` until hover. */
+    opacity: 0;
+    transition:
+      inset-inline-start 0.3s,
+      width 0.3s,
+      opacity 0.3s;
+  }
+
+  .es-nav-item:hover::after,
+  .es-nav-item:focus-visible::after,
+  .es-nav-item-active::after {
+    inset-inline-start: 0;
+    width: 100%;
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .es-nav-item::after {
+      transition: none;
+    }
+  }
+</style>

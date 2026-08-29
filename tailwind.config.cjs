@@ -1,26 +1,68 @@
 /** @type {import('tailwindcss').Config} */
 const defaultTheme = require("tailwindcss/defaultTheme");
+
 module.exports = {
   content: ["./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}"],
   theme: {
     extend: {
+      // Elementor breakpoints. Tailwind emits `theme.extend.screens` in
+      // declaration order and does not re-sort max-width queries, so `tablet`
+      // (max 1024px) MUST be declared before `mobile` (max 767px): both match a
+      // 390px viewport and the later rule wins. Declared the other way round,
+      // `tablet:` silently overrides every `mobile:` utility. That ordering also
+      // matches Elementor, where a mobile viewport inherits the tablet value
+      // unless a mobile override exists.
+      screens: {
+        tablet: { max: "1024px" },
+        mobile: { max: "767px" },
+        desktop: { min: "1025px" },
+      },
+      colors: {
+        ink: "#111111",
+        gold: "#f2cb0f",
+        sand: "#f8f5eb",
+        es: {
+          brand: "#F8F43D",
+          cta: "#F8F43D85",
+          ctaHover: "#F8F43DCC",
+          link: "#CFC725",
+          nav: "#3F3F3FCF",
+          navB: "#5F5F5F",
+          overlay: "#503607",
+          cardBorder: "#5DBBFE91",
+        },
+      },
       fontFamily: {
         sans: ["Inter Variable", "Inter", ...defaultTheme.fontFamily.sans],
-        boxShadow: {
-          'primary': '3px 4px 10px 0px rgba(0, 0, 0, 0.5)'
-        }
+        // Elementor emits `font-family: "Poppins", Sans-serif` for every widget
+        // with `typography_font_family=Poppins`; match that stack exactly so the
+        // fallback resolves the same way the source does.
+        poppins: ["Poppins", "sans-serif"],
+      },
+      maxWidth: {
+        content: "72rem",
+        prose: "70ch",
+      },
+      spacing: {
+        section: "5rem",
+      },
+      borderRadius: {
+        card: "0.75rem",
+      },
+      boxShadow: {
+        primary: "3px 4px 10px 0px rgba(0, 0, 0, 0.5)",
       },
     },
   },
   plugins: [require("@tailwindcss/typography"), require("daisyui")],
   daisyui: {
-    themes: false, // true: all themes | false: only light + dark | array: specific themes like this ["light", "dark", "cupcake"]
-    darkTheme: "light", // name of one of the included themes for dark mode
-    base: true, // applies background color and foreground color for root element by default
-    styled: true, // include daisyUI colors and design decisions for all components
-    utils: true, // adds responsive and modifier utility classes
-    rtl: false, // rotate style direction from left-to-right to right-to-left. You also need to add dir="rtl" to your html tag and install `tailwindcss-flip` plugin for Tailwind CSS.
-    prefix: "", // prefix for daisyUI classnames (components, modifiers and responsive class names. Not colors)
-    logs: true, // Shows info about daisyUI version and used config in the console when building your CSS
+    themes: false,
+    darkTheme: "light",
+    base: true,
+    styled: true,
+    utils: true,
+    rtl: false,
+    prefix: "",
+    logs: true,
   },
 };

@@ -1,0 +1,113 @@
+/**
+ * EN destinations-index blocks, generated from the source's own Elementor
+ * JSON by `reference/tools/gen-destination-index.py en`.
+ */
+import type { EsDestinationBlock } from "../es/destination-index";
+import { blockImage } from "../es/destination-index";
+
+export const blocks: EsDestinationBlock[] = [
+  {
+    title: "Pinar del Rio",
+    body: "Located at the western end of the island of Cuba, the province of Pinar del Río is a jewel that combines the richness of its natural environment with a fascinating history that goes back centuries. Known as the cradle of the best tobacco in the world, this region offers its visitors a landscape of unique beauty and an authentic atmosphere that makes them fall in love from the first moment.",
+    buttonText: "See More",
+    href: "/destinations/pinar-del-rio",
+    textFirst: true,
+    textBasis: 51.316,
+    mediaBasis: 48.641,
+    buttonMarginTopMobile: -10,
+    slides: [
+      { image: blockImage("pinar-del-rio", "terrazas"), alt: "Terrazas, Pinar del Rio Cuba" },
+      { image: blockImage("pinar-del-rio", "soroa"), alt: "Soroa, Pinar del Rio Cuba" },
+      { image: blockImage("pinar-del-rio", "indian-cave"), alt: "Indian Cave, Pinar del Rio Cuba" },
+      { image: blockImage("pinar-del-rio", "levisa-fell"), alt: "Cayo Levisa, Pinar del Rio Cuba." },
+      { image: blockImage("pinar-del-rio", "vinales"), alt: "Viñales Valley, Pinar del Rio Cuba" },
+    ],
+  },
+  {
+    title: "Matanzas",
+    body: "Is a city located on the north coast of Cuba, founded in 1693. During the Spanish colonial era, Matanzas became an important economic center thanks to sugar production and maritime trade. The city was also an important cultural and literary center in the 19th century, known as \"The Athens of Cuba\". Today, Matanzas is a popular tourist destination thanks to its colonial architecture, its rich cultural life, and its proximity to beautiful beaches.",
+    bodyParagraph: true,
+    buttonText: "See More",
+    href: "/destinations/matanzas",
+    textFirst: false,
+    textBasis: 53.598,
+    mediaBasis: 46.402,
+    tabletBasis: 50,
+    buttonMarginTopMobile: -30,
+    slides: [
+      { image: blockImage("matanzas", "canimar-river"), alt: "" },
+      { image: blockImage("matanzas", "varadero-beach"), alt: "" },
+      { image: blockImage("matanzas", "sauto-theater"), alt: "Sauto Theater, Matanzas Cuba" },
+      { image: blockImage("matanzas", "saturn-cave"), alt: "Saturn Cave, Matanzas Cuba" },
+      { image: blockImage("matanzas", "liberty-park"), alt: "" },
+    ],
+  },
+  {
+    title: "Havana",
+    body: "Havana is the capital of Cuba and one of the oldest cities in America. It was founded in 1519 by the Spanish and became an important commercial and military center during the colonial era. In the 20th century, Havana became a cultural and political center of the region, and was the scene of important events such as the Cuban Revolution in 1959. The city has rich spanish colonial architecture, as well as important historical monuments such as El Malecón, La Plaza de la Revolución and El Castillo del Morro.",
+    bodyParagraph: true,
+    buttonText: "See More",
+    href: "/destinations/havana",
+    textFirst: true,
+    textBasis: 51.316,
+    mediaBasis: 48.641,
+    buttonMarginTopMobile: -30,
+    slides: [
+      { image: blockImage("destinations", "havana"), alt: "" },
+      { image: blockImage("havana", "el-malecon"), alt: "" },
+      { image: blockImage("havana", "the-capitol"), alt: "The Capitol, Havana Cuba" },
+      { image: blockImage("havana", "the-colon-cemetery"), alt: "The Cristobal Colon Cementery of Havana, Havana Cuba" },
+      { image: blockImage("havana", "el-morro-and-la-cabana"), alt: "" },
+    ],
+  },
+  {
+    title: "Trinidad",
+    body: "Trinidad is a colonial city located on the southern coast of Cuba, founded in 1514. During colonial times, the city became a major center of sugar production and slavery, and has many well-preserved colonial houses and museums displaying the city ​​history. Today, Trinidad is a popular tourist destination due to its colonial architecture, nearby beaches, and lively cultural life.",
+    bodyParagraph: true,
+    buttonText: "See More",
+    href: "/destinations/trinidad",
+    textFirst: false,
+    textBasis: 51.14,
+    mediaBasis: 48.86,
+    buttonMarginTopMobile: -30,
+    slides: [
+      { image: blockImage("trinidad", "valley-of-the-sugar-mills"), alt: "" },
+      { image: blockImage("trinidad", "the-romantic-museum"), alt: "" },
+      { image: blockImage("trinidad", "the-church-of-the-holy-trinity"), alt: "The Holy Trinity Church, Trinidad Cuba" },
+      { image: blockImage("trinidad", "ancon-beach"), alt: "Beach Ancon, Trinidad Cuba" },
+      { image: blockImage("destinations", "trinidad"), alt: "" },
+    ],
+  },
+  {
+    title: "Cienfuegos",
+    body: "Cienfuegos is a city on the southern coast of Cuba, founded in 1819 by French colonists. During the 19th and 20th centuries it became an important commercial and industrial port thanks to the production of sugar. The city is famous for its neoclassical architecture, its rich cultural history, its annual carnival, and its nearby beaches. Today, it is a popular tourist destination in Cuba, attractive for its cultural heritage and natural beauty.",
+    buttonText: "See More",
+    href: "/destinations/cienfuegos",
+    textFirst: true,
+    textBasis: 51.316,
+    mediaBasis: 48.641,
+    buttonMarginTopMobile: -10,
+    slides: [
+      { image: blockImage("destinations", "cienfuegos"), alt: "" },
+      { image: blockImage("cienfuegos", "el-malecon"), alt: "" },
+      { image: blockImage("cienfuegos", "el-nicho"), alt: "" },
+    ],
+  },
+  {
+    title: "Santiago de Cuba",
+    body: "Santiago de Cuba is the second largest city in Cuba, located on the east coast of the island. It was founded in 1515 by the Spanishs and became an important economic and military center during the colonial era. The city is known for its music, carnival and historical importance in the fight for Cuban independence. Santiago has several historical monuments, such as El Castillo del Morro, Santa Ifigenia Cemetery and the Moncada Barracks, where the Cuban Revolution began.",
+    buttonText: "See More",
+    href: "/destinations/santiago-cuba",
+    textFirst: false,
+    textBasis: 51.14,
+    mediaBasis: 48.86,
+    buttonMarginTopMobile: -10,
+    slides: [
+      { image: blockImage("santiago-cuba", "sierra-maestra"), alt: "" },
+      { image: blockImage("destinations", "santiago-cuba"), alt: "" },
+      { image: blockImage("santiago-cuba", "el-salto-del-caburni"), alt: "" },
+      { image: blockImage("santiago-cuba", "castillo-de-san-pedro-de-la-roca-del-morro"), alt: "" },
+      { image: blockImage("santiago-cuba", "catedral-de-santiago-de-cuba"), alt: "" },
+    ],
+  },
+];

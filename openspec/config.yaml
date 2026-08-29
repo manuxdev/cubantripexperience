@@ -1,0 +1,37 @@
+# OpenSpec configuration initialized for the Cuban Trip Experience visual migration.
+project: cubantripexperience
+artifact_store: both
+strict_tdd: false
+source_of_truth:
+  source_project: wordpress/
+  target_project: cubantripexperience/
+reference_url: http://localhost:8080/
+phases:
+  init:
+    required: true
+    rules:
+      - Inspect source and target stacks, conventions, and test capabilities.
+      - Preserve existing user-maintained configuration and avoid migration planning.
+  proposal:
+    rules:
+      - Define visual and public-content migration scope before implementation.
+      - Exclude booking functionality, booking plugins, and WordPress administration.
+  spec:
+    rules:
+      - Specify observable public-site behavior and visual parity expectations.
+      - Keep booking workflows outside the target scope.
+  design:
+    rules:
+      - Prefer the existing Astro target conventions unless the approved design changes them.
+      - Account for responsive visual comparison against the local reference site.
+  tasks:
+    rules:
+      - Use the target project's npm build command as the baseline verification.
+      - Add focused tests or visual checks only when implementation requires them.
+testing:
+  runner: npm
+  commands:
+    install: npm install
+    build: npm run build
+  test_command: null
+  notes: Target package.json exposes build/dev/preview/start scripts but no test script or configured test runner.

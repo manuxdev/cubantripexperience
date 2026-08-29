@@ -1,0 +1,848 @@
+---
+import EsLayout from "../../layouts/EsLayout.astro";
+import { BOOKING } from "../../data/booking";
+import { BOOKING_FORM } from "../../data/booking-form";
+import { DIAL_CODES } from "../../data/dial-codes";
+import { FORM_MESSAGES } from "../../i18n/form-messages";
+import { ROUTES } from "../../i18n/site";
+import type { SiteLang } from "../../i18n/site";
+
+// reference/<lang>/<booking page>/spec.md. The skeleton matches across editions
+// except for one real difference: Spanish gives the "More information" heading a
+// section of its own, English and Russian keep it in the section with the copy —
+// worth 20px of wrap padding, so it rides in as `moreHeadingOwnSection`.
+export interface Props {
+  lang?: SiteLang;
+  /** Only Spanish authors a different copyright here. */
+  footerCopyright?: string;
+  /**
+   * The footer's logo column and menu width at tablet. English `bookings`
+   * authors neither `_inline_size_tablet` nor `_element_custom_width_tablet`, so
+   * both inherit their desktop values instead of the 35% / 223.328px the other
+   * pages set — and at 35% the middle column no longer fits and the whole footer
+   * stacks, 172px worth.
+   */
+  footerLogoTabletWidth?: string;
+  footerMenuTabletWidth?: string;
+}
+
+const {
+  lang = "es",
+  footerCopyright,
+  footerLogoTabletWidth,
+  footerMenuTabletWidth,
+} = Astro.props;
+const c = BOOKING[lang];
+const f = BOOKING_FORM[lang];
+
+const REGION_CODES =
+  "AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS YE YT ZA ZM ZW".split(
+    " "
+  );
+const regionNames = new Intl.DisplayNames(["es"], { type: "region" });
+const COUNTRIES = REGION_CODES.map((code) => ({
+  code,
+  name: regionNames.of(code) ?? code,
+  dial: DIAL_CODES[code],
+})).sort((a, b) => a.name.localeCompare(b.name, "es"));
+
+/** `<input type="date" min>` wants the visitor's own today, not the server's. */
+const today = new Date().toLocaleDateString("en-CA");
+
+const labelClass =
+  "mb-[5px] block text-[14px] leading-[1.6rem] font-medium text-black";
+const nextClass =
+  "mt-[30px] rounded-[7px] bg-es-brand px-[15px] py-[10px] font-poppins text-[1rem] leading-[1rem] font-semibold text-[#101010]";
+const backClass =
+  "mt-[30px] rounded-[7px] border border-[#0201012B] px-[15px] py-[10px] font-poppins text-[1rem] leading-[1rem] font-semibold text-[#3A3838]";
+
+/**
+ * `widget:tabs`, verbatim from `reference/es/reservar/elementor.json` — the four
+ * panels explain the booking form step by step. Only the first is in any
+ * reference capture (Elementor renders the rest `display:none` until a click),
+ * so the other three are `hidden` on load and the pixel gate never sees them.
+ */
+---
+
+<EsLayout
+  title={c.title}
+  heroTitle={c.hero}
+  showReserve={false}
+  lang={lang}
+  footerCopyright={footerCopyright}
+  footerLogoTabletWidth={footerLogoTabletWidth}
+  footerMenuTabletWidth={footerMenuTabletWidth}>
+  <div class="bg-white">
+    <div class="mx-auto w-full max-w-[1140px] p-[10px]">
+      <div class="h-[10px]" aria-hidden="true"></div>
+    </div>
+
+    <div class="mx-auto w-full max-w-[1140px] p-[10px]">
+      <h2
+        class="text-center font-poppins text-[32px] font-semibold leading-[40px] text-black tablet:text-[25px] tablet:leading-[31.25px] mobile:text-[25px] mobile:leading-[31.25px]">
+        {c.howHeading}
+      </h2>
+    </div>
+
+    <div class="mx-auto w-full max-w-[604px] p-[10px]">
+      <div>
+        {/* Desktop / tablet: horizontal tab bar, tab 1 active. The active
+            tab and the content panel below it share one continuous 3px
+            border (no border between them); inactive tabs carry the same
+            3px border in transparent, just to hold their height. */}
+        <div class="es-tabs mobile:hidden" data-tabs="desktop">
+          <div class="flex" role="tablist">
+            {
+              c.tabs.map((tab, i) => (
+                <button
+                  type="button"
+                  role="tab"
+                  data-tab={i}
+                  id={`es-tab-${i}`}
+                  aria-selected={i === 0 ? "true" : "false"}
+                  aria-controls={`es-tabpanel-${i}`}
+                  class:list={[
+                    "es-tab border-[3px] px-[25px] py-[20px] font-poppins text-[1rem] leading-[1rem] font-semibold",
+                    i === 0
+                      ? "border-[#FFE684] border-b-transparent bg-[#F8F7F7] text-[#3A3937]"
+                      : "border-transparent text-[#F8CA46]",
+                  ]}>
+                  {tab.title}
+                </button>
+              ))
+            }
+          </div>
+          {
+            c.tabs.map((tab, i) => (
+              <div
+                id={`es-tabpanel-${i}`}
+                data-panel={i}
+                role="tabpanel"
+                aria-labelledby={`es-tab-${i}`}
+                class:list={[
+                  "es-copy border-x-[3px] border-b-[3px] border-[#FFE684] p-[20px]",
+                  i === 0 ? "" : "hidden",
+                ]}
+                set:html={tab.body}
+              />
+            ))
+          }
+        </div>
+
+        {/* Mobile: accordion, tab 1 expanded. Each title/content row carries
+            its own top+left border; the outer wrapper below closes off the
+            right+bottom edge, so adjoining rows read as one bordered list
+            (measured live — Elementor's own border-collapse trick). */}
+        <div
+          class="es-tabs hidden border-b-[3px] border-r-[3px] border-[#FFE684] mobile:block"
+          data-tabs="mobile">
+          {
+            c.tabs.map((tab, i) => (
+              <div>
+                <button
+                  type="button"
+                  role="tab"
+                  data-tab={i}
+                  id={`es-acc-${i}`}
+                  aria-selected={i === 0 ? "true" : "false"}
+                  aria-controls={`es-accpanel-${i}`}
+                  class:list={[
+                    "es-tab block w-full border-l-[3px] border-t-[3px] border-[#FFE684] p-[10px] text-left font-poppins text-[1rem] leading-[1.6em] font-semibold",
+                    i === 0 ? "text-[#3A3937]" : "text-[#F8CA46]",
+                  ]}>
+                  {tab.title}
+                </button>
+                <div
+                  id={`es-accpanel-${i}`}
+                  data-panel={i}
+                  role="tabpanel"
+                  aria-labelledby={`es-acc-${i}`}
+                  class:list={[
+                    "es-copy border-l-[3px] border-t-[3px] border-[#FFE684] p-[10px]",
+                    i === 0 ? "" : "hidden",
+                  ]}
+                  set:html={tab.body}
+                />
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="mx-auto w-full max-w-[1140px] p-[10px]">
+      <div class="h-[50px]" aria-hidden="true"></div>
+    </div>
+
+    <div class="mx-auto w-full max-w-[810px] p-[10px]">
+      <div
+        class="rounded-[8px] border border-[#0201012B] p-[40px] shadow-[8px_6px_10px_0px_rgba(0,0,0,0.33)]">
+        <h3
+          class="mb-[30px] text-left font-poppins text-[26px] font-semibold leading-[31.2px] text-[#1E293B] tablet:text-[20px] tablet:leading-[24px] mobile:text-[20px] mobile:leading-[24px]">
+          Crea tu Reserva!
+        </h3>
+
+        <div class="mb-[20px]">
+          <p
+            id="ff_progress_label"
+            data-titles={JSON.stringify(f.stepTitles)}
+            data-prefix={f.stepPrefix}
+            class="mb-[5px] leading-[1.6rem] font-semibold text-[14.4px] text-[#6EC1E4] tablet:text-[10.944px] mobile:text-[10.944px]">
+            {f.stepPrefix.replace("{n}", "1")}{f.stepTitles[0]}
+          </p>
+          {/* Measured on the source: the progress track is 20.8px at desktop and
+              19px under the 921px root scale, not a flat 21px. */}
+          <div class="h-[20.8px] w-full rounded-[4px] bg-[#E7E4E4] tablet:h-[19px]">
+            <div
+              id="ff_progress_bar"
+              class="flex h-full w-1/3 items-center justify-end rounded-[4px] bg-es-brand pr-[5px]">
+              <span id="ff_progress_pct" class="text-[12px] text-[#181717]">33%</span>
+            </div>
+          </div>
+        </div>
+
+        {/* The conditional rules compare against the edition's own option text —
+      "Van" / "Ван", "Aeropuerto" / "Aeroport" / "аэропорт" — so the values
+      travel with the markup rather than being hard-coded in the script. */}
+        <form
+          id="ff_reserva"
+          novalidate
+          data-van={f.taxi.options[1]}
+          data-airport-option={f.pickup.options[0]}
+          data-other-option={f.pickup.options[1]}
+          data-lang={lang}
+          data-confirmation={ROUTES[lang].confirmation}
+          data-today={today}
+          data-messages={JSON.stringify(FORM_MESSAGES[lang])}>
+          {/* STEP 1 — `.fluentform-step` carries a 3px padding, which is what
+              puts the cells at x369 inside a container that starts at x366 and
+              makes each column 344px rather than 347px. */}
+          <div data-step="1">
+            <div class="grid grid-cols-2 gap-x-[14px] p-[3px] mobile:grid-cols-1">
+              <div class="mb-[20px]">
+                <label for="ff_taxi" class={labelClass}>
+                  {f.taxi.label}{" "}
+                  <span class="text-[#e74c3c]" aria-hidden="true">*</span>
+                </label>
+                <select id="ff_taxi" name="taxi" class="es-res-field" required>
+                  <option value="">{f.country.placeholder}</option>
+                  {f.taxi.options.map((o) => <option value={o}>{o}</option>)}
+                </select>
+              </div>
+              <div>
+                <div class="mb-[20px]">
+                  <label for="ff_fecha" class={labelClass}>
+                    {f.date.label}{" "}
+                    <span class="text-[#e74c3c]" aria-hidden="true">*</span>
+                  </label>
+                  {/* `type="text"` until it is focused, then swapped to `date` so
+                      the native picker opens. A permanent `type="date"` renders
+                      Chrome's segmented editor and calendar glyph, which is not
+                      what the source's flatpickr text input looks like and would
+                      move the pixel gate. */}
+                  <input
+                    type="text"
+                    id="ff_fecha"
+                    name="fecha"
+                    placeholder={f.date.placeholder}
+                    data-picker="date"
+                    min={today}
+                    required
+                    class="es-res-field"
+                  />
+                </div>
+                <div class="mb-[20px]" data-when="formato12h:off">
+                  <label for="ff_hora" class={labelClass}>
+                    {f.hour.label}{" "}
+                    <span class="text-[#e74c3c]" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="ff_hora"
+                    name="hora"
+                    data-picker="time"
+                    required
+                    class="es-res-field"
+                  />
+                </div>
+                {/* The source authors TWO "Hora:" fields — a 24h one and a 12h
+                    one — and the checkbox swaps which is visible. */}
+                <div class="mb-[20px] hidden" data-when="formato12h:on">
+                  <label for="ff_hora12" class={labelClass}>
+                    {f.hour12.label}{" "}
+                    <span class="text-[#e74c3c]" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="ff_hora12"
+                    name="hora12"
+                    placeholder="hh:mm AM"
+                    data-picker="time12"
+                    required
+                    class="es-res-field"
+                  />
+                </div>
+                {/* `pb-[5px]`, not a margin on the check row: the source's group
+                    is 61px because the check row's own 5px bottom margin is
+                    inside it, and a margin on our last child would escape. */}
+                <div class="mb-[20px] pb-[5px]">
+                  <span class={labelClass}>{f.format.label}</span>
+                  <label class="flex items-center gap-[8px] text-[1rem] leading-[1.6em] text-[#334155]">
+                    <input type="checkbox" id="ff_formato12h" name="formato12h" value="Sistema 12 Horas" />
+                    {f.format.options[0]}
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* STEP 2 — Datos Personales */}
+          <div data-step="2" class="hidden">
+            <div class="grid grid-cols-2 gap-x-[14px] p-[3px] mobile:grid-cols-1">
+              <div class="mb-[20px]">
+                <label for="ff_nombre" class={labelClass}>
+                  {f.firstName.label}{" "}
+                  <span class="text-[#e74c3c]" aria-hidden="true">*</span>
+                </label>
+                <input type="text" id="ff_nombre" name="nombre" placeholder={f.firstName.placeholder} required class="es-res-field" />
+              </div>
+              <div class="mb-[20px]">
+                <label for="ff_apellido" class={labelClass}>
+                  {f.lastName.label}{" "}
+                  <span class="text-[#e74c3c]" aria-hidden="true">*</span>
+                </label>
+                <input type="text" id="ff_apellido" name="apellido" placeholder={f.lastName.placeholder} required class="es-res-field" />
+              </div>
+              <div class="mb-[20px]">
+                <label for="ff_pais" class={labelClass}>
+                  {f.country.label}{" "}
+                  <span class="text-[#e74c3c]" aria-hidden="true">*</span>
+                </label>
+                <select id="ff_pais" name="pais" required class="es-res-field">
+                  <option value="">{f.country.placeholder}</option>
+                  {COUNTRIES.map((country) => (
+                    <option value={country.name} data-dial={`+${country.dial}`}>
+                      {country.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div class="mb-[20px]">
+                <label for="ff_correo" class={labelClass}>
+                  {f.email.label}{" "}
+                  <span class="text-[#e74c3c]" aria-hidden="true">*</span>
+                </label>
+                <input type="email" id="ff_correo" name="correo" placeholder={f.email.placeholder} required class="es-res-field" />
+              </div>
+              <div class="mb-[20px]">
+                <label for="ff_telefono" class={labelClass}>
+                  {f.phone.label}{" "}
+                  <span class="text-[#e74c3c]" aria-hidden="true">*</span>
+                </label>
+                {/* Split in two: the dialling code is a closed list, so it
+                    cannot be mistyped, and it leaves the text field holding only
+                    the national number — which is what the digit check below can
+                    actually verify. Picking a country above moves this with it. */}
+                <div class="flex gap-[8px]">
+                  <select id="ff_prefijo" name="prefijo" required class="es-res-field es-res-dial">
+                    {COUNTRIES.map((country) => (
+                      <option value={`+${country.dial}`} data-country={country.code}>
+                        {country.code} +{country.dial}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    type="tel"
+                    id="ff_telefono"
+                    name="telefono"
+                    placeholder={f.phone.placeholder}
+                    inputmode="tel"
+                    autocomplete="tel-national"
+                    required
+                    class="es-res-field"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* STEP 3 — Datos de reserva */}
+          <div data-step="3" class="hidden">
+            <div class="grid grid-cols-2 gap-x-[14px] p-[3px] mobile:grid-cols-1">
+              {/* Two passenger selects, swapped by the vehicle chosen on step 1:
+                  1–3 for Estándar and Clásico, 4–9 for the Van. */}
+              <div class="mb-[20px]" data-when="taxi:not-van">
+                <label for="ff_pax" class={labelClass}>
+                  {f.passengers.label}{" "}
+                  <span class="text-[#e74c3c]" aria-hidden="true">*</span>
+                </label>
+                <select id="ff_pax" name="pasajeros" required class="es-res-field">
+                  <option value="">{f.country.placeholder}</option>
+                  {f.passengers.options.map((o) => <option value={o}>{o}</option>)}
+                </select>
+              </div>
+              <div class="mb-[20px] hidden" data-when="taxi:van">
+                <label for="ff_pax_van" class={labelClass}>
+                  {f.passengersVan.label}{" "}
+                  <span class="text-[#e74c3c]" aria-hidden="true">*</span>
+                </label>
+                <select id="ff_pax_van" name="pasajerosVan" required class="es-res-field">
+                  <option value="">{f.country.placeholder}</option>
+                  {f.passengersVan.options.map((o) => <option value={o}>{o}</option>)}
+                </select>
+              </div>
+              <div class="mb-[20px]">
+                <label for="ff_recogida" class={labelClass}>
+                  {f.pickup.label}{" "}
+                  <span class="text-[#e74c3c]" aria-hidden="true">*</span>
+                </label>
+                <select id="ff_recogida" name="recogida" required class="es-res-field">
+                  <option value="">{f.country.placeholder}</option>
+                  {f.pickup.options.map((o) => <option value={o}>{o}</option>)}
+                </select>
+              </div>
+              <div class="mb-[20px] hidden" data-when="recogida:aeropuerto">
+                <label for="ff_vuelo" class={labelClass}>
+                  {f.flight.label}{" "}
+                  <span class="text-[#e74c3c]" aria-hidden="true">*</span>
+                </label>
+                <input type="text" id="ff_vuelo" name="vuelo" placeholder={f.flight.placeholder} required class="es-res-field" />
+              </div>
+              <div class="mb-[20px] hidden" data-when="recogida:aeropuerto">
+                <label for="ff_aeropuerto" class={labelClass}>
+                  {f.airport.label}{" "}
+                  <span class="text-[#e74c3c]" aria-hidden="true">*</span>
+                </label>
+                <select id="ff_aeropuerto" name="aeropuerto" required class="es-res-field">
+                  <option value="">{f.country.placeholder}</option>
+                  {f.airport.options.map((o) => <option value={o}>{o}</option>)}
+                </select>
+              </div>
+              <div class="mb-[20px] hidden" data-when="recogida:otro">
+                <label for="ff_direccion" class={labelClass}>
+                  {f.address.label}{" "}
+                  <span class="text-[#e74c3c]" aria-hidden="true">*</span>
+                </label>
+                <input type="text" id="ff_direccion" name="direccion" placeholder={f.address.placeholder} required class="es-res-field" />
+              </div>
+            </div>
+            <div class="p-[3px]">
+              <span class={labelClass}>
+                {f.terms.label}{" "}
+                <span class="text-[#e74c3c]" aria-hidden="true">*</span>
+              </span>
+              <label class="flex items-start gap-[8px] text-[1rem] leading-[1.6em] text-[#334155]">
+                <input type="checkbox" id="ff_condiciones" name="condiciones" required class="mt-[6px] shrink-0" />
+                {f.terms.options[0]}
+              </label>
+            </div>
+          </div>
+
+          <p
+            id="ff_error"
+            class="hidden pt-[10px] text-[14px] leading-[1.6rem] text-[#e74c3c]"
+            role="alert">
+          </p>
+
+          <div class="flex justify-end gap-[10px]">
+            <button type="button" data-back class={`hidden ${backClass}`}>
+              {f.buttons.prev}
+            </button>
+            <button type="button" data-next class={nextClass}>
+              {f.buttons.next}
+            </button>
+            <button type="submit" data-submit class={`hidden ${nextClass}`}>
+              {f.buttons.submit}
+            </button>
+          </div>
+          {/* Fluent Form's own multi-step scaffolding (hidden step nav +
+              progress markup for steps 2/3) reserves 15px below the visible
+              button even though nothing else renders — measured against the
+              source's `.fluentform` box, not guessed. */}
+          <div class="h-[15px]" aria-hidden="true"></div>
+        </form>
+      </div>
+    </div>
+
+    <div class="mx-auto w-full max-w-[1140px] p-[10px]">
+      <div class="h-[50px]" aria-hidden="true"></div>
+    </div>
+
+    {
+      c.moreHeadingOwnSection && (
+        <div class="mx-auto w-full max-w-[1140px] p-[10px]">
+          <h2 class="mt-[10px] font-poppins text-[20px] leading-[25px] font-semibold text-[#1A1B1B]">
+            {c.moreHeading}
+          </h2>
+        </div>
+      )
+    }
+
+    <div class="mx-auto w-full max-w-[1132px] p-[10px]">
+      {
+        /* Inside the same wrap as the copy, so it carries Elementor's 20px
+           inter-widget gap; Spanish gets that spacing from its own section's
+           padding instead. */
+        !c.moreHeadingOwnSection && (
+          <h2 class="mb-[20px] mt-[10px] font-poppins text-[20px] leading-[25px] font-semibold text-[#1A1B1B]">
+            {c.moreHeading}
+          </h2>
+        )
+      }
+      {/* Two widgets with Elementor's 20px gap. The copy's own `<p>` margin
+          escapes the widget in the source, so it measures 102.38px rather than
+          127.97px, and the anchor sits in a `1.6em` line box (25.59px) instead
+          of being 15px tall. */}
+      <div
+        class="es-copy mb-[20px] w-[96.031%] tablet:w-full"
+        set:html={c.moreBody}
+      />
+      <div class="mb-[20px] leading-[1.6rem]">
+      <a
+        href={ROUTES[lang].contact}
+        class="inline-flex items-center gap-[6px] font-poppins text-[15px] leading-[15px] font-medium text-[#070606] hover:text-[#ECC21D]">
+        Contáctanos
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 256 512"
+          class="h-[11px] w-[11px]"
+          fill="currentColor"
+          aria-hidden="true">
+          <path
+            d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z"
+          ></path>
+        </svg>
+      </a>
+      </div>
+      <div class="h-[68px]" aria-hidden="true"></div>
+    </div>
+  </div>
+  {/* English closes with an empty section; Elementor still renders 1px of it. */}
+  {c.trailingSection && <div class="h-px" aria-hidden="true" />}
+</EsLayout>
+
+
+<style>
+  /* The source's Fluent Form controls have no authored height — they fall out
+     of `padding: 11px 15px`, a 1px border and the UA's own intrinsic sizing,
+     which differs between `<select>` and `<input>` and again under Astra's
+     921px root scale. Measured on the live source rather than reproduced from a
+     formula: select 44/43, input 42/41. A flat 44px everywhere was 1.34px too
+     tall per field at tablet and mobile, four fields deep. */
+  .es-res-field {
+    display: block;
+    width: 100%;
+    height: 44px;
+    padding: 11px 15px;
+    border: 1px solid #ced4da;
+    border-radius: 10px;
+    background: rgba(227, 227, 227, 0.27);
+    font-family: inherit;
+    font-size: 1rem;
+    color: #606266;
+  }
+
+  input.es-res-field {
+    height: 42px;
+  }
+
+  /* The dialling code sits beside the number rather than above it. Declared
+     here, after `.es-res-field`, so it beats that rule's `width: 100%` without
+     depending on where Tailwind happens to order an arbitrary utility. */
+  .es-res-dial {
+    width: auto;
+    flex: none;
+    padding-right: 8px;
+  }
+
+  @media (max-width: 1024px) {
+    .es-res-field {
+      height: 43px;
+    }
+
+    input.es-res-field {
+      height: 41px;
+    }
+  }
+</style>
+
+<script>
+  // `widget:tabs` — a horizontal bar on desktop and tablet, an accordion at
+  // mobile, so the page renders both and CSS picks one. Each is wired
+  // independently; the active tab and its panel share one continuous border,
+  // which is why the styling moves between the button and the panel rather than
+  // living on a wrapper.
+  for (const group of document.querySelectorAll<HTMLElement>("[data-tabs]")) {
+    const isAccordion = group.dataset.tabs === "mobile";
+    const buttons = [...group.querySelectorAll<HTMLElement>("[data-tab]")];
+    const panels = [...group.querySelectorAll<HTMLElement>("[data-panel]")];
+
+    const select = (index: number) => {
+      buttons.forEach((button, i) => {
+        const active = i === index;
+        button.setAttribute("aria-selected", String(active));
+        button.classList.toggle("text-[#3A3937]", active);
+        button.classList.toggle("text-[#F8CA46]", !active);
+        if (!isAccordion) {
+          button.classList.toggle("border-[#FFE684]", active);
+          button.classList.toggle("border-b-transparent", active);
+          button.classList.toggle("bg-[#F8F7F7]", active);
+          button.classList.toggle("border-transparent", !active);
+        }
+      });
+      panels.forEach((panel, i) => panel.classList.toggle("hidden", i !== index));
+    };
+
+    buttons.forEach((button, i) => {
+      button.addEventListener("click", () => select(i));
+      // Arrow keys, per the tablist pattern.
+      button.addEventListener("keydown", (event: KeyboardEvent) => {
+        const step = event.key === "ArrowRight" || event.key === "ArrowDown" ? 1
+          : event.key === "ArrowLeft" || event.key === "ArrowUp" ? -1 : 0;
+        if (!step) return;
+        event.preventDefault();
+        const next = (i + step + buttons.length) % buttons.length;
+        select(next);
+        buttons[next].focus();
+      });
+    });
+  }
+</script>
+
+<script>
+  const form = document.getElementById("ff_reserva") as HTMLFormElement | null;
+  if (form) {
+    const steps = [...form.querySelectorAll<HTMLElement>("[data-step]")];
+    const errorBox = document.getElementById("ff_error") as HTMLElement;
+    const backBtn = form.querySelector<HTMLButtonElement>("[data-back]")!;
+    const nextBtn = form.querySelector<HTMLButtonElement>("[data-next]")!;
+    const submitBtn = form.querySelector<HTMLButtonElement>("[data-submit]")!;
+    const progressLabel = document.getElementById("ff_progress_label")!;
+    const progressBar = document.getElementById("ff_progress_bar")!;
+    const progressPct = document.getElementById("ff_progress_pct")!;
+    const titles = JSON.parse(progressLabel.dataset.titles ?? "[]") as string[];
+
+    /** Native pickers: the source is a flatpickr text input, so the field only
+     *  becomes a `date`/`time` input while it is being used. Leaving it as one
+     *  permanently would render Chrome's segmented editor and calendar glyph,
+     *  which the source does not have. */
+    for (const input of form.querySelectorAll<HTMLInputElement>("[data-picker]")) {
+      const kind = input.dataset.picker;
+      const nativeType = kind === "date" ? "date" : "time";
+      const open = () => {
+        if (input.type === nativeType) return;
+        input.type = nativeType;
+        if (kind === "time12") input.step = "60";
+        input.showPicker?.();
+      };
+      input.addEventListener("focus", open);
+      input.addEventListener("click", open);
+      input.addEventListener("blur", () => {
+        if (!input.value) input.type = "text";
+      });
+    }
+
+    /** Conditional visibility, one rule per `data-when` value. Mirrors the six
+     *  `conditional_logics` entries on the source form. */
+    const conditions: Record<string, () => boolean> = {
+      "formato12h:on": () => (form.elements.namedItem("formato12h") as HTMLInputElement).checked,
+      "formato12h:off": () => !(form.elements.namedItem("formato12h") as HTMLInputElement).checked,
+      "taxi:van": () => (form.elements.namedItem("taxi") as HTMLSelectElement).value === form.dataset.van,
+      "taxi:not-van": () => (form.elements.namedItem("taxi") as HTMLSelectElement).value !== form.dataset.van,
+      "recogida:aeropuerto": () => (form.elements.namedItem("recogida") as HTMLSelectElement).value === form.dataset.airportOption,
+      "recogida:otro": () => (form.elements.namedItem("recogida") as HTMLSelectElement).value === form.dataset.otherOption,
+    };
+
+    const applyConditions = () => {
+      for (const el of form.querySelectorAll<HTMLElement>("[data-when]")) {
+        const test = conditions[el.dataset.when ?? ""];
+        el.classList.toggle("hidden", test ? !test() : false);
+      }
+    };
+    form.addEventListener("change", applyConditions);
+
+    const isVisible = (el: HTMLElement) => el.offsetParent !== null;
+
+    const messages = JSON.parse(form.dataset.messages ?? "{}") as Record<string, string>;
+    const today = form.dataset.today ?? "";
+
+    /** Keep the dialling code on the country the visitor just picked. Only until
+     *  they touch the code themselves — after that it is their choice, not a
+     *  derived value, and moving it under them would be wrong. */
+    const country = form.elements.namedItem("pais") as HTMLSelectElement;
+    const dial = document.getElementById("ff_prefijo") as HTMLSelectElement;
+    let dialIsDerived = true;
+    dial.addEventListener("change", () => {
+      dialIsDerived = false;
+    });
+    /** A pasted international number carries its own `+code`. Rejecting it would
+     *  be hostile — it is a correct number — so move the code into the select
+     *  and leave the national part behind. Longest match first: +1 is a prefix
+     *  of +1268, and taking the short one would strip three digits off the
+     *  number. */
+    const phone = document.getElementById("ff_telefono") as HTMLInputElement;
+    const codes = [...new Set([...dial.options].map((o) => o.value))].sort(
+      (a, b) => b.length - a.length
+    );
+    phone.addEventListener("input", () => {
+      const raw = phone.value.replace(/[\s().-]/g, "");
+      if (!raw.startsWith("+")) return;
+      const hit = codes.find((code) => raw.startsWith(code) && raw.length > code.length);
+      if (!hit) return;
+      dial.value = hit;
+      dialIsDerived = false;
+      phone.value = raw.slice(hit.length);
+    });
+
+    country.addEventListener("change", () => {
+      if (!dialIsDerived) return;
+      // Each country option carries its own `+code`, so this is a read rather
+      // than a lookup — several regions share one code and matching back the
+      // other way would land on the wrong one.
+      const code = country.selectedOptions[0]?.dataset.dial;
+      if (code) dial.value = code;
+    });
+
+    /** Beyond "not empty": one rule per field that has a shape worth checking.
+     *  Each returns the message to show, or `null` when the value is fine. */
+    const rules: Record<string, (value: string) => string | null> = {
+      // `min` already stops the native picker, but the field starts life as
+      // `type="text"` and can be typed into or pasted over.
+      fecha: (v) => (today && v < today ? messages.datePast : null),
+      correo: (v) => (/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(v) ? null : messages.email),
+      // E.164 caps the whole number at 15 digits including the country code, so
+      // the national part can never be longer than 14. Spaces, dashes and
+      // parentheses are how people write numbers; strip them before counting.
+      telefono: (v) => (/^\d{4,14}$/.test(v.replace(/[\s().-]/g, "")) ? null : messages.phone),
+    };
+
+    /** Only what the visitor can actually see is required — a hidden branch
+     *  (the 12h clock, the Van passenger count, the flight number) must never
+     *  block the step it is not part of. */
+    const validate = (step: HTMLElement) => {
+      const fields = [...step.querySelectorAll<HTMLInputElement | HTMLSelectElement>("[required]")];
+      let firstBad: HTMLElement | null = null;
+      let message = "";
+      for (const field of fields) {
+        const shown = isVisible(field);
+        const value = field.value.trim();
+        const empty =
+          field instanceof HTMLInputElement && field.type === "checkbox"
+            ? !field.checked
+            : !value;
+        // An empty field is incomplete, not malformed: run the shape rule only
+        // once there is something to judge, so the first prompt is never
+        // "that email is invalid" over a box the visitor has not filled in.
+        const problem = empty
+          ? messages.incomplete
+          : rules[field.name]?.(value) ?? (field.checkValidity() ? null : messages.incomplete);
+        const bad = shown && Boolean(problem);
+        field.classList.toggle("border-[#e74c3c]", bad);
+        field.setAttribute("aria-invalid", bad ? "true" : "false");
+        if (bad && !firstBad) {
+          firstBad = field;
+          message = problem as string;
+        }
+      }
+      if (firstBad) {
+        errorBox.textContent = message;
+        errorBox.classList.remove("hidden");
+        firstBad.focus();
+        return false;
+      }
+      errorBox.classList.add("hidden");
+      return true;
+    };
+
+    let current = 0;
+    const showStep = (index: number) => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, i) => step.classList.toggle("hidden", i !== current));
+      progressLabel.textContent = `Paso ${current + 1} de ${steps.length} - ${titles[current]}`;
+      const pct = Math.round(((current + 1) / steps.length) * 100);
+      progressBar.style.width = `${((current + 1) / steps.length) * 100}%`;
+      progressPct.textContent = `${pct}%`;
+      backBtn.classList.toggle("hidden", current === 0);
+      nextBtn.classList.toggle("hidden", current === steps.length - 1);
+      submitBtn.classList.toggle("hidden", current !== steps.length - 1);
+      applyConditions();
+    };
+
+    nextBtn.addEventListener("click", () => {
+      if (validate(steps[current])) showStep(current + 1);
+    });
+    backBtn.addEventListener("click", () => {
+      errorBox.classList.add("hidden");
+      showStep(current - 1);
+    });
+
+    const say = (text: string, bad: boolean) => {
+      errorBox.textContent = text;
+      errorBox.classList.remove("hidden");
+      errorBox.classList.toggle("text-[#e74c3c]", bad);
+      errorBox.classList.toggle("text-[#1f7a3d]", !bad);
+    };
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!validate(steps[current])) return;
+
+      const data = new FormData(form);
+      const value = (name: string) => String(data.get(name) ?? "").trim();
+      const payload = {
+        lang: form.dataset.lang,
+        taxi: value("taxi"),
+        fecha: value("fecha"),
+        // Whichever clock is on show. Both are native time inputs, so both read
+        // back as 24-hour `HH:MM` regardless of which one the visitor saw.
+        hora: value("hora") || value("hora12"),
+        nombre: value("nombre"),
+        apellido: value("apellido"),
+        pais: value("pais"),
+        correo: value("correo"),
+        prefijo: value("prefijo"),
+        telefono: value("telefono"),
+        pasajeros: value("pasajeros") || value("pasajerosVan"),
+        recogida: value("recogida"),
+        vuelo: value("vuelo"),
+        aeropuerto: value("aeropuerto"),
+        direccion: value("direccion"),
+      };
+
+      // Locked while in flight: a second click is a second booking, and the team
+      // would have no way to tell the duplicate from a real one.
+      submitBtn.disabled = true;
+      backBtn.disabled = true;
+      say(messages.sending, false);
+
+      try {
+        const res = await fetch("/api/booking", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const result = (await res.json()) as {
+          ok: boolean;
+          reference?: number;
+          emailed?: boolean;
+        };
+        if (!result.ok) throw new Error("rejected");
+        // The reference travels in the URL, not in memory, so the confirmation
+        // survives a refresh, a bookmark and a forwarded link. `replace` rather
+        // than `assign`: Back must not return to a filled-in form whose booking
+        // has already been filed.
+        const to = new URL(form.dataset.confirmation!, location.origin);
+        to.searchParams.set("ref", String(result.reference));
+        if (!result.emailed) to.searchParams.set("mail", "0");
+        location.replace(to.toString());
+        return;
+      } catch {
+        // Nothing was filed, so the form stays exactly as the visitor left it and
+        // the buttons come back — retrying must cost them no retyping.
+        say(messages.failure, true);
+        submitBtn.disabled = false;
+        backBtn.disabled = false;
+      }
+    });
+  }
+</script>

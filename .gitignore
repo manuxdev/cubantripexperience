@@ -19,3 +19,14 @@ pnpm-debug.log*
 
 # macOS-specific files
 .DS_Store
+# Local Pi runtime state
+.atl/
+
+# Local CodeGraph index
+.codegraph/
+
+# Migration reference: keep specs + Elementor JSON, skip heavy captures
+reference/**/*.png
+reference/**/rendered.html
+reference/es/_media/
+reference/baseline/
