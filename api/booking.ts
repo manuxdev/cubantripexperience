@@ -428,7 +428,15 @@ export default async function handler(req: Req, res: Res) {
     return;
   }
 
-  const missing = REQUIRED_ENV.filter((key) => !process.env[key]);
+  // Trimmed, because these are pasted by hand into a dashboard field and a
+  // stray space survives the paste. One leading space on the database id sent
+  // Notion `databases/ f2510634-…` and came back as a 404 blaming the id — an
+  // error that reads like a wrong value or a missing share, and is neither.
+  const env = Object.fromEntries(
+    REQUIRED_ENV.map((key) => [key, (process.env[key] ?? "").trim()])
+  ) as BookingEnv;
+
+  const missing = REQUIRED_ENV.filter((key) => !env[key]);
   if (missing.length) {
     // Never name the variables in the response — that is a map of the setup for
     // anyone probing the endpoint. The log is where an operator looks.
@@ -444,10 +452,6 @@ export default async function handler(req: Req, res: Res) {
     res.status(400).json({ ok: false, error: "malformed" });
     return;
   }
-
-  const env = Object.fromEntries(
-    REQUIRED_ENV.map((key) => [key, process.env[key] as string])
-  ) as BookingEnv;
 
   const result = await createBooking(body as BookingInput, env);
   // A rejected booking is the visitor's input, not a server failure: 422 keeps
