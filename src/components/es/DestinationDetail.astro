@@ -1,0 +1,270 @@
+---
+import EsLayout from "../../layouts/EsLayout.astro";
+import type { EsDestination } from "../../data/es/destinations";
+import { ROUTES, STRINGS } from "../../i18n/site";
+import type { SiteLang } from "../../i18n/site";
+
+// The destination-detail page, shared by all three editions: the eight-section
+// skeleton is identical in `es`, `en` and `ru` — compared node by node — so only
+// the content and a handful of per-page geometry values differ, and those ride
+// in on the `destination` record.
+//
+// Section notes live with the markup below; the box model was measured against
+// the live source, not inferred.
+export interface Props {
+  destination: EsDestination;
+  lang?: SiteLang;
+  /** English `matanzas` and `pinar-del-rio` drop the Bookings menu item. */
+  dropBookingsLink?: boolean;
+}
+
+const { destination, lang = "es", dropBookingsLink = false } = Astro.props;
+const t = STRINGS[lang];
+
+const ANGLE_LEFT =
+  "M31.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L127.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L201.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34z";
+const ANGLE_RIGHT =
+  "M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6 0 34z";
+
+const {
+  heroTitle,
+  title,
+  landmarks,
+  links,
+  navAlign,
+  navContentWidth,
+  ctaTitle = "TE LLEVAMOS A TIEMPO AL LUGAR CORRECTO",
+  ctaTitleMobileWidth = "267.312px",
+  ctaButtonMobileWidth = "104.438px",
+  section5Spacer = 13,
+  footerCopyright,
+} = destination;
+
+const navJustify = {
+  "space-around": "justify-around",
+  "flex-start": "justify-start",
+  "flex-end": "justify-end",
+}[navAlign];
+---
+
+<EsLayout
+  title={title}
+  heroTitle={heroTitle}
+  showReserve={true}
+  footerCopyright={footerCopyright}
+  lang={lang}
+  dropBookingsLink={dropBookingsLink}>
+  {/* Section 3 — the five landmark cards */}
+  <section class="my-[20px]">
+    {/* `flex flex-col`, not a plain block: Elementor's `.elementor-widget-wrap`
+        is a flex container, so the cards' 20px top and bottom margins do NOT
+        collapse into a single 20px gap between siblings. As a block this is
+        exactly 20px short per card boundary — 80px over the five cards, which
+        `drift.mjs` reports as a monotonic -20/-40/-60/-80 cascade. */}
+    <div class="mx-auto flex max-w-[946px] flex-col p-[10px]">
+      {
+        landmarks.map((landmark) => (
+          <div
+            class="my-[20px] rounded-[10px] border border-[#E0DEDE] shadow-[3px_5px_10px_0px_rgba(0,0,0,0.15)]"
+            style={`--text-basis:${landmark.textBasis}%;--image-basis:${landmark.imageBasis}%;--img-w:${landmark.imageSpace}%;--img-w-mobile:${landmark.imageSpaceMobile}%;--img-ml:${landmark.imageMarginLeft ?? 0}px;--img-cw:${landmark.imageCustomWidth ?? 100}%;--media-align:${landmark.imageAlignEnd ? "flex-end" : "stretch"};--media-align-mobile:${landmark.columnAlignMobileCenter ? "center" : landmark.imageAlignEnd ? "flex-end" : "stretch"};--img-cw-mobile:${landmark.imageCustomWidthMobile !== undefined ? `${landmark.imageCustomWidthMobile}px` : `${landmark.imageCustomWidth ?? 100}%`}`}>
+            <div class="flex mobile:flex-col">
+              <div class="lmk-text flex flex-col justify-center p-[10px]">
+                <h2 class="mb-[20px] font-poppins text-[17px] font-semibold leading-[21.25px] text-[#3E4243]">
+                  {landmark.title}
+                </h2>
+                <div class="es-copy" set:html={landmark.bodyParagraph ? `<p>${landmark.body}</p>` : landmark.body} />
+              </div>
+              <div
+                class="lmk-media flex flex-col p-[10px]">
+                <div class="lmk-widget">
+                  <div class="lmk-inner">
+                    <img
+                      class="lmk-img mx-auto block h-auto rounded-[15px]"
+                      src={landmark.image.src}
+                      width={landmark.imageNativeWidth ?? landmark.image.width}
+                      height={landmark.imageNativeHeight ?? landmark.image.height}
+                      alt={landmark.alt}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  {/* Section 4 — adjacent destinations */}
+  <section>
+    <div
+      class:list={["mx-auto flex items-start p-[10px]", navJustify]}
+      style={`max-width:${navContentWidth ?? 1140}px`}>
+      {
+        links.map((link) => (
+          <div>
+            <div
+              class="es-dest-nav-btn mt-[-30px] leading-[1.6em]"
+              style={`--m-right:${link.mobileMarginRight ?? 0}px;--m-left:${link.mobileMarginLeft ?? 0}px`}>
+              <a
+                class="inline-flex items-center gap-[5px] font-poppins text-[20px] font-medium leading-[20px] text-[#3A3838] hover:text-[#E9D628] mobile:text-[16px] mobile:leading-[16px]"
+                href={link.href}>
+                {link.direction === "prev" && (
+                  <svg
+                    viewBox="0 0 256 512"
+                    class="h-[1em] w-[0.5em] shrink-0"
+                    fill="currentColor"
+                    aria-hidden="true">
+                    <path d={ANGLE_LEFT} />
+                  </svg>
+                )}
+                <span>{link.label}</span>
+                {link.direction === "next" && (
+                  <svg
+                    viewBox="0 0 256 512"
+                    class="h-[1em] w-[0.5em] shrink-0"
+                    fill="currentColor"
+                    aria-hidden="true">
+                    <path d={ANGLE_RIGHT} />
+                  </svg>
+                )}
+              </a>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  {/* Section 5 — spacer */}
+  <div class="mx-auto max-w-[1140px] p-[10px]">
+    <div style={`height:${section5Spacer}px`} aria-hidden="true"></div>
+  </div>
+
+  {/* Section 6 — CTA strip */}
+  <section class="bg-[#ECECEC]">
+    {/* `flex-wrap`, because Elementor's widget wrap wraps: on four of the six
+        pages the mobile heading (267.312px) plus the button no longer fit the
+        348px column, so the button drops to its own line. */}
+    <div
+      class="es-cta flex flex-wrap items-center justify-around p-[10px]"
+      style={`--cta-title-mobile:${ctaTitleMobileWidth};--cta-button-mobile:${ctaButtonMobileWidth};--cta-title-mobile-max:${ctaTitleMobileWidth === "auto" ? "63.968%" : "none"};--cta-button-mobile-max:${ctaButtonMobileWidth === "auto" ? "33.701%" : "none"}`}>
+      <h2
+        class="es-cta-title p-[30px] text-left font-poppins text-[32px] font-semibold leading-[40px] text-[#3A3A3A] tablet:text-[25px] tablet:leading-[31.25px]">
+        {ctaTitle}
+      </h2>
+      <div class="es-cta-button text-center">
+        <a
+          href={ROUTES[lang].booking}
+          class="inline-block rounded-[3px] bg-[#D3CA56] px-[20px] py-[15px] text-center font-poppins text-[15px] font-medium leading-[15px] text-white mobile:p-[10px]">
+          {t.ctaButton}
+        </a>
+      </div>
+    </div>
+  </section>
+
+  {/* Section 7 — spacer */}
+  <div class="mx-auto max-w-[1140px] p-[10px]">
+    <div class="h-[50px]" aria-hidden="true"></div>
+  </div>
+</EsLayout>
+
+<style>
+  /* Elementor column/image geometry, driven by the per-card custom properties
+     set inline above. Kept in CSS because the mobile override is a media query
+     an inline style cannot express, and the values are runtime data Tailwind's
+     JIT cannot compile into arbitrary classes. */
+  .lmk-text {
+    flex-basis: var(--text-basis);
+  }
+
+  .lmk-media {
+    flex-basis: var(--image-basis);
+    align-items: var(--media-align);
+  }
+
+  .lmk-widget {
+    width: var(--img-cw);
+  }
+
+  .lmk-inner {
+    margin-left: var(--img-ml);
+  }
+
+  .lmk-img {
+    /* Elementor's image-width control is `max-width`, not a forced `width`
+       (confirmed live: `getComputedStyle` on the source shows
+       `max-width: 72%` while the rendered box sits at the image's own
+       300x300 `medium` derivative, well under that cap). A forced `width`
+       is visually identical whenever the source is large enough to get
+       downscaled anyway — true for every other card in the dataset — so
+       this only changes behavior for the one `image_size=medium` outlier. */
+    max-width: var(--img-w);
+    /* `es.css` sets `img { content-visibility: auto }`. With five full-width
+       photos stacked at mobile, Chrome skips painting the last two because they
+       are far outside the viewport, and Playwright's `fullPage` screenshot
+       captures them blank — a code defect that looks like a missing image.
+       Scoped opt-out; `es.css` is frozen and stays untouched. */
+    content-visibility: visible;
+  }
+
+  /* `min-width: 0` so the authored basis holds and the content overflows past
+     it, which is what the source does: the Russian button's label is 143px wide
+     inside a 98.438px box and still sits beside the heading. Without it the
+     flex default (`min-width: auto`) widens the item to its content and the row
+     wraps, adding 50px the source does not have. */
+  .es-cta-title {
+    flex-basis: 63.968%;
+    min-width: 0;
+  }
+
+  .es-cta-button {
+    flex-basis: 33.701%;
+    min-width: 0;
+  }
+
+  /* Elementor stacks columns below 768px; every destination spec zeroes the
+     image widget's left margin there and swaps `space` for `space_mobile`. */
+  @media (max-width: 767px) {
+    .lmk-text,
+    .lmk-media {
+      flex-basis: auto;
+    }
+
+    .lmk-inner {
+      margin-left: 0;
+    }
+
+    .lmk-widget {
+      width: var(--img-cw-mobile);
+    }
+
+    .lmk-media {
+      align-items: var(--media-align-mobile);
+    }
+
+    /* `_element_width_mobile=auto` is `width: auto` with the desktop
+       `_element_custom_width` still capping it as `max-width` — confirmed live
+       on `trinidad`, the only page that authors it. */
+    .es-cta-title {
+      flex-basis: var(--cta-title-mobile);
+      max-width: var(--cta-title-mobile-max);
+    }
+
+    .es-cta-button {
+      flex-basis: var(--cta-button-mobile);
+      max-width: var(--cta-button-mobile-max);
+    }
+
+    .lmk-img {
+      max-width: var(--img-w-mobile);
+    }
+
+    /* `_margin_mobile` on the Section 4 buttons only — their desktop/tablet
+       `_margin` is `-30px 0 0 0`, so the horizontal offsets must not leak up. */
+    .es-dest-nav-btn {
+      margin-right: var(--m-right);
+      margin-left: var(--m-left);
+    }
+  }
+</style>

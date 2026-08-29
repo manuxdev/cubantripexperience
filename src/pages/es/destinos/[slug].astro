@@ -1,0 +1,18 @@
+---
+import DestinationDetail from "../../../components/es/DestinationDetail.astro";
+import { esDestinations } from "../../../data/es/destinations";
+
+// reference/es/<slug>/spec.md — the whole page lives in `DestinationDetail`,
+// which the English and Russian editions render too: the eight-section skeleton
+// is identical across all three, compared node by node.
+export function getStaticPaths() {
+  return esDestinations.map((destination) => ({
+    params: { slug: destination.slug },
+    props: { destination },
+  }));
+}
+
+const { destination } = Astro.props;
+---
+
+<DestinationDetail destination={destination} lang="es" />

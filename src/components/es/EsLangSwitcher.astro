@@ -1,0 +1,144 @@
+---
+import { FLAGS } from "../../i18n/flags";
+import { ROUTES } from "../../i18n/site";
+import type { SiteLang } from "../../i18n/site";
+import { translate } from "../../i18n/translations";
+
+/**
+ * Section 2's `widget:polylang-language-switcher`, previously an inert slot.
+ *
+ * Measured on the live source at 1440px: the toggle is a 54x27.59 pill on
+ * `#5F5F5F` with `1px 6px` padding, holding a 20x15 flag and a caret 12px to its
+ * right; the dropdown lists the other editions as 54x27 rows in the same pill
+ * colour, and opens on click. The flag artwork is the source's own inline SVG
+ * (`src/i18n/flags.ts`) — English uses the US flag there, not the UK one.
+ *
+ * Each entry links to the *equivalent* page, from Polylang's own
+ * `post_translations` groups, so switching from a destination lands on that
+ * destination rather than the home. Russian has no Pinar del Río, so that page's
+ * Russian entry falls back to the Russian home — the same thing the source does.
+ */
+export interface Props {
+  lang?: SiteLang;
+}
+
+const { lang = "es" } = Astro.props;
+const path = Astro.url.pathname;
+
+const NAMES: Record<SiteLang, string> = {
+  es: "Español",
+  en: "English",
+  ru: "Русский",
+};
+
+const order: SiteLang[] = ["es", "en", "ru"];
+const others = order.filter((l) => l !== lang);
+
+const CARET =
+  "M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z";
+---
+
+<div class="es-lang relative ml-[40px] shrink-0 mobile:ml-0" data-lang-switcher>
+  <button
+    type="button"
+    class="es-lang-pill"
+    aria-haspopup="true"
+    aria-expanded="false"
+    aria-label={`${NAMES[lang]} — cambiar idioma`}>
+    <span class="es-lang-flag" set:html={FLAGS[lang]} />
+    <svg viewBox="0 0 320 512" class="es-lang-caret" fill="currentColor" aria-hidden="true">
+      <path d={CARET} />
+    </svg>
+  </button>
+
+  <ul class="es-lang-list" hidden>
+    {
+      others.map((other) => (
+        <li>
+          <a
+            class="es-lang-pill"
+            hreflang={other}
+            href={translate(path, other, ROUTES[other].home)}
+            aria-label={NAMES[other]}>
+            <span class="es-lang-flag" set:html={FLAGS[other]} />
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  .es-lang {
+    width: 54px;
+  }
+
+  /* 54x27.59 on the source: `1px 6px` around a 20x15 flag, with the caret 12px
+     to its right. */
+  .es-lang-pill {
+    display: flex;
+    width: 54px;
+    align-items: center;
+    padding: 1px 6px;
+    background-color: #5f5f5f;
+    color: #7a7a7a;
+    /* The source's anchor is inline: its height comes from the line box, not
+       from the flag. `1.6rem` is Astra's body leading, so this tracks the 921px
+       root scale exactly as the source does — 27.6px desktop, 25.35px below. */
+    min-height: calc(1.6rem + 2px);
+  }
+
+  .es-lang-flag {
+    display: block;
+    width: 20px;
+    height: 15px;
+    flex: none;
+  }
+
+  .es-lang-flag :global(svg) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .es-lang-caret {
+    width: 10px;
+    height: 16px;
+    margin-left: 12px;
+    flex: none;
+  }
+
+  .es-lang-list {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: 40;
+    width: 54px;
+  }
+
+  .es-lang-list .es-lang-pill {
+    height: 27px;
+    line-height: normal;
+  }
+</style>
+
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>("[data-lang-switcher]")) {
+    const toggle = root.querySelector<HTMLButtonElement>(".es-lang-pill")!;
+    const list = root.querySelector<HTMLElement>(".es-lang-list")!;
+    const setOpen = (open: boolean) => {
+      list.hidden = !open;
+      toggle.setAttribute("aria-expanded", String(open));
+    };
+    toggle.addEventListener("click", (event) => {
+      event.stopPropagation();
+      setOpen(list.hidden);
+    });
+    // A click anywhere else, or Escape, closes it — otherwise the panel sits over
+    // the page with no way back on a phone.
+    document.addEventListener("click", () => setOpen(false));
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") setOpen(false);
+    });
+  }
+</script>

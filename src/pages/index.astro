@@ -1,23 +1,16 @@
 ---
-import Container from "@components/container.astro";
-import Cta from "@components/home/cta.astro";
-import Features from "@components/home/features.astro";
-import Hero from "@components/home/hero.astro";
-import Logos from "@components/home/logos.astro";
-import Menus from "@components/navbar/menus.astro";
-import Layout from "@layouts/Layout.astro";
-import Cosaesa from "@components/home/cosaesa.astro";
-import Section1 from "@components/home/section1.astro";
+import HomePage from "../components/es/HomePage.astro";
 ---
 
-<Layout title="">
-  <Container>
-    <Hero />
-    <Menus />
-    <Section1 />
-    <Features />
-    <Logos />
-    <Cosaesa />
-    <Cta />
-  </Container>
-</Layout>
+{/* English drops both empty sections and marks the band above the van block
+    `hide_mobile` instead. Its footer authors no tablet override, so the logo
+    column and the menu keep their desktop widths. */}
+<HomePage
+  lang="en"
+  footerMenuTabletWidth="311.312px"
+  footerLogoTabletWidth="9.208%"
+  gapSection="none"
+  emptyMobileSection={false}
+  blueBandHiddenOnMobile={true}
+  footerNarrowGap={true}
+/>

@@ -1,64 +1,58 @@
 ---
 import { SEO } from "astro-seo";
 import Footer from "@components/footer.astro";
-import { ViewTransitions } from "astro:transitions";
+import Header from "@components/header.astro";
+import { site } from "../data/site";
 import "@fontsource-variable/inter/index.css";
-import Navbar from "@components/navbar/navbar.astro";
+import "../styles/global.css";
 
 export interface Props {
-  title: string;
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  ogImageAlt?: string;
+  bodyClass?: string;
 }
 
+const {
+  title,
+  description = site.description,
+  ogImage = "/opengraph.jpg",
+  ogImageAlt = "Cuban Trip Experience",
+  bodyClass,
+} = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
-
-const resolvedImageWithDomain = new URL(
-  "src/assets/logo.webp",
-  Astro.site
-).toString();
-
-const { title } = Astro.props;
-
-const makeTitle = title
-  ? title + " | " + "Servicio de Taxi en Cuba"
-  : "Cuban Trip Experience | Servicio de Taxi en Cuba";
+const imageURL = new URL(ogImage, Astro.site).toString();
+const pageTitle = title
+  ? `${site.name} | ${title}`
+  : `${site.name} | ${site.titleSuffix}`;
 ---
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang={site.language}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
-
-    <!-- <link rel="preload" as="image" href={src} alt="Hero" /> -->
     <SEO
-      title={makeTitle}
-      description="Astroship is a starter website template for Astro built with TailwindCSS."
+      title={pageTitle}
+      description={description}
       canonical={canonicalURL}
       openGraph={{
         basic: {
           url: canonicalURL,
           type: "website",
-          title: `Cuban Trip Experience | Servicio de Taxi en Cuba`,
-          image: resolvedImageWithDomain,
+          title: pageTitle,
+          image: imageURL,
         },
-        image: {
-          alt: "Astroship Homepage Screenshot",
-        },
+        image: { alt: ogImageAlt },
       }}
     />
-    <ViewTransitions />
   </head>
-  <>
-    <Navbar />
-    <slot />
+  <body class={bodyClass}>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <Header />
+    <main id="main-content"><slot /></main>
     <Footer />
-    <style is:global>
-      /* Improve Page speed */
-      /* https://css-tricks.com/almanac/properties/c/content-visibility/ */
-      img {
-        content-visibility: auto;
-      }
-    </style>
-  </>
+  </body>
 </html>

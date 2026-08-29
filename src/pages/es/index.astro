@@ -1,0 +1,13 @@
+---
+import HomePage from "../../components/es/HomePage.astro";
+---
+
+{/* Spanish leaves an empty section between the "why" block and the features,
+    and an empty `hide_mobile` one before the van block. */}
+<HomePage
+  lang="es"
+  footerMenuTabletWidth="331px"
+  footerLogoTabletWidth="9%"
+  gapSection="empty"
+  emptyMobileSection={true}
+/>

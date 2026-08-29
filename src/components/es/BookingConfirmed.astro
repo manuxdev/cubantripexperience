@@ -1,0 +1,115 @@
+---
+import EsLayout from "../../layouts/EsLayout.astro";
+import { BOOKING_CONFIRMED } from "../../i18n/booking-confirmed";
+import { ROUTES } from "../../i18n/site";
+import type { SiteLang } from "../../i18n/site";
+
+/**
+ * Where a submitted booking lands. There is no equivalent page in the
+ * WordPress source, so nothing here is measured against it — it just wears the
+ * same shell as every other page.
+ *
+ * The reference arrives in the query string rather than in memory, so the screen
+ * survives a refresh, a bookmark and a forwarded link. The page itself stays
+ * static: the number is written in by a few lines of script on load.
+ */
+export interface Props {
+  lang?: SiteLang;
+}
+
+const { lang = "es" } = Astro.props;
+const c = BOOKING_CONFIRMED[lang];
+const routes = ROUTES[lang];
+
+const buttonClass =
+  "inline-block rounded-[7px] px-[18px] py-[11px] font-poppins text-[1rem] font-semibold leading-[1rem]";
+---
+
+<EsLayout title={c.title} heroTitle={c.hero} showReserve={true} lang={lang}>
+  <section class="bg-[#EFF1F2] pb-[70px] pt-[50px]">
+    <div class="mx-auto w-full max-w-[760px] px-[20px]">
+      <div
+        class="rounded-[20px] border-b-[3px] border-r-[3px] border-[#5DBBFE91] bg-white p-[40px] text-center shadow-[4px_5px_6px_0px_rgba(0,0,0,0.19)] mobile:p-[24px]">
+        <svg
+          viewBox="0 0 512 512"
+          class="mx-auto mb-[20px] h-[56px] w-[56px]"
+          fill="#1f7a3d"
+          aria-hidden="true">
+          <path
+            d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm115.7-283.3L224.6 320.4l-84.3-85.1c-4.7-4.7-12.3-4.7-17 0l-17 17c-4.7 4.7-4.7 12.3 0 17l109.8 110.7c4.7 4.7 12.3 4.7 17 0l172.6-171.2c4.7-4.7 4.7-12.3 0-17l-17-17c-4.7-4.7-12.3-4.7-17 0z"
+          />
+        </svg>
+
+        <h1
+          class="mb-[14px] font-poppins text-[28px] font-semibold leading-[1.25] text-[#101010] mobile:text-[22px]">
+          {c.heading}
+        </h1>
+        <p class="es-body mx-auto max-w-[520px] font-poppins text-[15px] text-[#404041]">
+          {c.intro}
+        </p>
+
+        {/* Hidden until the script finds a reference: an empty box with a stray
+            `#` reads as a bug, and a made-up placeholder reads as a real number. */}
+        <div id="bc_ref_box" class="my-[28px] hidden">
+          <p
+            class="mb-[6px] font-poppins text-[13px] font-medium uppercase tracking-[0.08em] text-[#6b6b6b]">
+            {c.referenceLabel}
+          </p>
+          <p
+            id="bc_ref"
+            class="font-poppins text-[40px] font-bold leading-[1.1] text-[#101010] mobile:text-[32px]">
+          </p>
+          <p id="bc_mail" class="mt-[10px] font-poppins text-[14px] text-[#404041]"></p>
+        </div>
+
+        <p
+          id="bc_missing"
+          class="my-[28px] hidden font-poppins text-[15px] text-[#404041]">
+          {c.missing}
+        </p>
+
+        <p
+          class="mx-auto max-w-[560px] font-poppins text-[13px] leading-[1.6] text-[#6b6b6b]">
+          {c.reviewNote}
+        </p>
+
+        <div class="mt-[28px] flex flex-wrap justify-center gap-[12px]">
+          <a href={routes.home} class:list={[buttonClass, "bg-es-brand text-[#101010]"]}>
+            {c.backHome}
+          </a>
+          <a
+            href={routes.destinations}
+            class:list={[buttonClass, "border border-[#0201012B] text-[#3A3838]"]}>
+            {c.seeDestinations}
+          </a>
+          <a
+            id="bc_retry"
+            href={routes.booking}
+            class:list={[buttonClass, "hidden bg-es-brand text-[#101010]"]}>
+            {c.missingCta}
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</EsLayout>
+
+<script is:inline define:vars={{ sentCopy: c.emailSent, noEmailCopy: c.noEmail }}>
+  // Inline and `define:vars`: this runs on a static page and needs the edition's
+  // own copy, which a bundled module would have to fetch or duplicate.
+  const params = new URLSearchParams(location.search);
+  const raw = params.get("ref");
+  // Only a plain positive integer. The value is echoed into the page, so
+  // anything else is refused rather than rendered.
+  const ref = /^\d{1,9}$/.test(raw ?? "") ? raw : null;
+
+  if (ref) {
+    document.getElementById("bc_ref").textContent = `#${ref}`;
+    document.getElementById("bc_mail").textContent =
+      params.get("mail") === "0" ? noEmailCopy : sentCopy;
+    document.getElementById("bc_ref_box").classList.remove("hidden");
+  } else {
+    document.getElementById("bc_missing").classList.remove("hidden");
+    document.getElementById("bc_retry").classList.remove("hidden");
+  }
+</script>

@@ -1,0 +1,961 @@
+---
+import EsLayout from "../../layouts/EsLayout.astro";
+import heroImage from "@assets/pages/es/hero.webp";
+import vanImage from "@assets/pages/home/taxi-in-cuba.webp";
+import havanaImage from "@assets/pages/home/havana-destination.webp";
+import reviewAvatar from "@assets/pages/home/review-avatar-placeholder.png";
+import { FEATURE_ICONS, TRUSTPILOT_URL, esFeatures, esReviews } from "../../data/es/home";
+import { HOME } from "../../data/home";
+import { ROUTES, STRINGS } from "../../i18n/site";
+import type { SiteLang } from "../../i18n/site";
+
+// reference/<lang>/<home>/spec.md. The three editions differ structurally in a
+// few places, not just in copy, so those differences ride in as props rather
+// than being guessed: see `gapSection`, `emptyMobileSection` and
+// `blueBandHiddenOnMobile` below.
+export interface Props {
+  lang?: SiteLang;
+  footerMenuTabletWidth?: string;
+  footerNarrowGap?: boolean;
+  footerLogoTabletWidth?: string;
+  /** Spanish leaves an empty section here; Russian puts a spacer; English has neither. */
+  gapSection?: "empty" | "spacer" | "none";
+  /** Spanish and Russian carry an empty `hide_mobile` section before the van block. */
+  emptyMobileSection?: boolean;
+  /** English marks the band above the van block `hide_mobile`. */
+  blueBandHiddenOnMobile?: boolean;
+}
+
+const {
+  lang = "es",
+  footerMenuTabletWidth,
+  footerNarrowGap = false,
+  footerLogoTabletWidth,
+  gapSection = "empty",
+  emptyMobileSection = true,
+  blueBandHiddenOnMobile = false,
+} = Astro.props;
+const WORDMARK: Record<SiteLang, { src: string; width: number; height: number }> = {
+  es: { src: "/home/booking-wordmark.webp", width: 466, height: 90 },
+  en: { src: "/home/booking-wordmark-en.webp", width: 427, height: 94 },
+  ru: { src: "/home/booking-wordmark-ru.webp", width: 457, height: 77 },
+};
+const wordmark = WORDMARK[lang];
+
+const c = HOME[lang];
+const L = c.layout;
+
+/**
+ * One Elementor spacer, as authored. Emitted as custom properties rather than
+ * `h-[Npx]` classes: these values are runtime data and Tailwind's JIT cannot
+ * compile an arbitrary class it never sees in the source.
+ */
+const spacer = (sp: (typeof L)["heroSpacer"], fallback = 50) => {
+  const desktop = sp?.desktop ?? fallback;
+  const mobile = sp && !sp.hideMobile && sp.mobile !== null ? sp.mobile : desktop;
+  return `--sp:${desktop}px;--sp-mobile:${sp?.hideMobile ? 0 : mobile}px`;
+};
+const t = STRINGS[lang];
+
+const ANGLE_LEFT =
+  "M31.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L127.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L201.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34z";
+const ANGLE_RIGHT =
+  "M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6 0 34z";
+const STAR =
+  "M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z";
+---
+
+<EsLayout
+  title={c.title}
+  heroTitle={c.hero}
+  showReserve={true}
+  lang={lang}
+  footerMenuTabletWidth={footerMenuTabletWidth}
+  footerLogoTabletWidth={footerLogoTabletWidth}
+  footerNarrowGap={footerNarrowGap}>
+  {/* Section 1 — full-height hero */}
+  <section
+    slot="hero"
+    class="relative bg-cover bg-no-repeat bg-[position:bottom_center] tablet:bg-[position:center_right] mobile:bg-[position:bottom_center]"
+    style={`background-image: url(${heroImage.src})`}>
+    <div class="absolute inset-0 bg-es-overlay/50"></div>
+    <div
+      class="relative z-10 flex min-h-screen items-center mobile:min-h-0 mobile:items-start">
+      <div class="w-full p-[10px]">
+        {/* `header_size=h1`, so Astra's 1.4 leading applies — not the 1.25 the
+            other ten heroes get from their default h2. */}
+        <h1
+          class="mb-[20px] text-center font-poppins text-[47px] font-semibold leading-[1.4] text-white tablet:text-[45px] mobile:mt-[80px] mobile:text-[24px]">
+          {c.hero}
+        </h1>
+        <div
+          class="es-copy es-hero-copy mb-[20px] text-center font-poppins text-[20px] font-normal text-[#D5C6C6] tablet:mx-auto tablet:w-fit tablet:text-[17px] mobile:mx-auto mobile:w-fit mobile:text-[11px]">
+          {c.heroLines.map((line) => (
+            <p set:html={line} />
+          ))}
+        </div>
+        <div
+          class="es-spacer mb-[20px]" style={spacer(L.heroSpacer)}
+          aria-hidden="true">
+        </div>
+        {/* `hide_mobile` on the hero's own Reservar button. */}
+        <div class="text-center mobile:hidden">
+          <a
+            href={ROUTES[lang].booking}
+            class="inline-block rounded-[3px] bg-es-cta px-[24px] py-[12px] text-center font-poppins text-[15px] font-medium leading-[15px] text-white [text-shadow:0_0_10px_rgba(0,0,0,0.3)] hover:bg-es-ctaHover hover:text-black">
+            {t.reserve}
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* Section 3 — the van block, mobile only. `hide_desktop`+`hide_tablet`:
+      here the vehicle is the section's own background image, not an `<img>`. */}
+  <section
+    data-anim="fadeInRight"
+    class="es-van-mobile relative hidden bg-no-repeat mobile:mt-[50px] mobile:block"
+    style={`--van-w:${L.vanMobileBg.width}px;--van-x:${L.vanMobileBg.x}px;--van-y:${L.vanMobileBg.y}px`}>
+    <div class="flex flex-col items-start">
+      <h2
+        class="ml-[15px] w-[349.766px] font-poppins text-[22px] font-semibold leading-[1.25] text-[#404041]">
+        {c.vanHeading}
+      </h2>
+      <div
+        class="es-copy es-body ml-[15px] mt-[10px] w-[312.594px] font-poppins text-[12px] font-normal"
+        set:html={c.vanBodyMobile}
+      />
+      <div
+        class="es-van-mobile-cta ml-[15px]"
+        style={`--cta-mt:${L.vanMobileButtonMarginTop}px`}>
+        <a
+          href={ROUTES[lang].services}
+          class="inline-block rounded-[3px] bg-[#67b3e8] px-[10px] py-[8px] font-poppins text-[12px] font-medium leading-[12px] text-white hover:bg-[#317DB3]">
+          {c.vanButton}
+        </a>
+      </div>
+      <div
+        class="es-spacer w-full"
+        style={spacer(L.vanMobileSpacer)}
+        aria-hidden="true">
+      </div>
+    </div>
+  </section>
+
+  {/* Section 4 — "¿Por qué somos los mejores?" (`content_width=887`) */}
+  <section>
+    <div class="mx-auto max-w-[887px] p-[10px]">
+      {/* `space=33px` with `space_mobile=10px` — and `hide_mobile`, so the
+          mobile value never renders. */}
+      <div
+        class:list={["es-spacer mb-[20px]", L.whySpacer?.hideMobile && "mobile:hidden"]}
+        style={spacer(L.whySpacer)}
+        aria-hidden="true">
+      </div>
+      {/* The one heading on the whole site at weight 700. */}
+      <h2
+        class="mb-[20px] text-center font-poppins text-[37px] font-bold leading-[1.25] text-black mobile:text-[27px]">
+        {c.whyHeading}
+      </h2>
+      <div
+        class="es-copy es-body text-center font-poppins text-[12.5px] font-normal"
+        set:html={c.whyBody}
+      />
+
+    </div>
+  </section>
+
+  {/* Between the "why" block and the features the three editions differ: Spanish
+      leaves an empty section (Elementor still renders 1px of it), Russian puts a
+      spacer there, English has neither. */}
+  {L.gapEmpty && <section class="h-px" aria-hidden="true" />}
+  {
+    L.gapSpacer && (
+      <div class="mx-auto max-w-[1140px] p-[10px]">
+        <div class:list={["es-spacer", L.gapSpacer?.hideMobile && "mobile:hidden"]}
+          style={spacer(L.gapSpacer)} aria-hidden="true" />
+      </div>
+    )
+  }
+
+  {/* Section 6 — three feature cards (`content_width=950`) */}
+  <section>
+    <div class="mx-auto flex max-w-[950px] mobile:flex-col">
+      {
+        esFeatures.map((feature, i) => (
+          <div
+            class="es-feature mt-[10px] p-[10px]"
+            style={`--basis:${L.featureBasis[i]}%;--tablet-basis:${L.featureBasisTablet[i]}%;--box-w:${feature.customWidth ?? 100}%`}>
+            {/* The icon sits on this line box's baseline, so the box is 50px
+                plus the strut's descent — 57.59px under Astra's 1.6rem body
+                leading. Tailwind's preflight ships `html { line-height: 1.5 }`
+                after `es.css`, so without this the strut is 24px and the whole
+                column comes up 1.6px short. */}
+            <div class="mb-[20px] text-center leading-[1.6rem]">
+              <span class="es-icon">
+                <svg
+                  viewBox={FEATURE_ICONS[feature.icon].viewBox}
+                  fill="#F8F43D"
+                  aria-hidden="true">
+                  <path d={FEATURE_ICONS[feature.icon].path} />
+                </svg>
+              </span>
+            </div>
+            <div class="es-feature-box mx-auto text-center">
+              {/* Astra scales its own h3 responsively: 26px/31.2px desktop, 20px/24px
+                  at tablet and mobile. Not a `typography_font_size` the widget
+                  authors — the widget sets only the family and weight. */}
+              <h3 class="mb-[20px] font-poppins text-[26px] font-semibold leading-[31.2px] text-black tablet:text-[20px] tablet:leading-[24px]">
+                {c.features[i].title}
+              </h3>
+              <div class="es-copy es-body font-poppins font-normal mobile:text-[12px]">
+                {c.features[i].body}
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  {/* Section 7 — `background_color=#67b3e8` with NO `background_background`
+      key, so Elementor never emits it and the band is white. The blue visible
+      here in the source is the van photograph's own background bleeding out of
+      Section 9, which the -30px margin on Section 8 pulls up over it. */}
+  <section
+    class:list={[L.blueBandHiddenOnMobile && "mobile:hidden", L.bandMarginBottom && "-mb-[30px]"]}>
+    <div class="mx-auto max-w-[1140px] p-[10px]">
+      <div class="es-spacer" style={spacer(L.bandSpacer)} aria-hidden="true"></div>
+    </div>
+  </section>
+
+  {/* An empty `hide_mobile` section whose `margin-bottom: -30px` pulls the van
+      block up over the band above it. English does not have it. */}
+  {
+    L.emptyMobileSection && (
+      <section class="-mb-[30px] h-px mobile:hidden" aria-hidden="true" />
+    )
+  }
+
+  {/* Section 9 — the van block, desktop and tablet (`hide_mobile`) */}
+  <section data-anim="fadeInRight" class="mt-[20px] mobile:hidden">
+    <div class="flex items-center">
+      {/* `gap=no` on Section 9, so its columns carry none of Elementor's default
+          10px wrap padding — which also means every `_element_custom_width`
+          here is a percentage of the full column, not of a padded content box. */}
+      <div class="es-van-text flex flex-col items-end">
+        <h2
+          class="w-[80.108%] text-left font-poppins text-[32px] font-semibold leading-[1.25] text-[#404041] tablet:text-[25px]">
+          {c.vanHeading}
+        </h2>
+        <div
+          class="es-copy es-body mt-[10px] w-[79.477%] text-left font-poppins text-[14px] font-normal"
+          set:html={c.vanBodyDesktop}
+        />
+
+        <div
+          class="es-van-cta w-[80.47%]"
+          style={`--van-cta-mt:${L.vanDesktopButtonMarginTop}px`}>
+          <a
+            href={ROUTES[lang].services}
+            class="inline-block rounded-[3px] bg-[#67b3e8] px-[24px] py-[12px] font-poppins text-[15px] font-medium leading-[15px] text-white hover:bg-[#317DB3]">
+            {c.vanButton}
+          </a>
+        </div>
+        <div
+          class="es-spacer w-full"
+          style={spacer(L.vanDesktopSpacer)}
+          aria-hidden="true">
+        </div>
+      </div>
+      <div class="es-van-media">
+        <img
+          class="es-van-img block h-auto w-full"
+          src={vanImage.src}
+          width={vanImage.width}
+          height={vanImage.height}
+          alt="Taxi clásico cubano"
+        />
+      </div>
+    </div>
+  </section>
+
+  {/* Section 10 — spacer */}
+  <div class="mx-auto max-w-[1140px] p-[10px]">
+    <div class="es-spacer" style={spacer(L.afterVanSpacer)} aria-hidden="true"></div>
+  </div>
+
+  {/* Section 11 — "Descubre el mejor destino" (`content_width_tablet=845`) */}
+  <section>
+    <div class="mx-auto flex max-w-[1140px] tablet:max-w-[845px] mobile:flex-col">
+      <div class="es-discover-media p-[10px]">
+        <img
+          class="es-discover-img mx-auto block h-auto rounded-[30px]"
+          src={havanaImage.src}
+          width={havanaImage.width}
+          height={havanaImage.height}
+          alt="La Habana"
+        />
+      </div>
+      <div class="es-discover-text flex flex-col justify-center p-[10px]">
+        <h2
+          class="mb-[20px] text-left font-poppins text-[32px] font-semibold leading-[1.25] text-[#F7D82B] tablet:w-[333.016px] mobile:w-auto mobile:text-center mobile:text-[22px]">
+          {c.discoverHeading}
+        </h2>
+        <div
+          class="es-copy es-body mb-[20px] text-left font-poppins text-[14px] font-normal"
+          set:html={c.discoverBody}
+        />
+
+        <div
+          class="es-booking text-left mobile:text-center"
+          style={`--book-mt:${L.bookingMarginTopMobile}px;--book-w:${L.bookingWidthMobile ?? 83}%`}>
+          <a href={ROUTES[lang].booking}>
+            <img
+              class="es-booking-img inline-block h-auto"
+              src={wordmark.src}
+              width={wordmark.width}
+              height={wordmark.height}
+              alt={STRINGS[lang].reserve}
+            />
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* Section 12 — spacer */}
+  <div class="mx-auto max-w-[1140px] p-[10px]">
+    <div class="es-spacer" style={spacer(L.beforeBandSpacer)} aria-hidden="true"></div>
+  </div>
+
+  {/* Section 13 — the white-to-yellow band. `column_position=top`, so the copy
+      sits at the top of the 296px box rather than centred in it. */}
+  <section
+    class="es-band flex bg-gradient-to-b from-white to-[#E6D146]"
+    style={`--band-h:${L.bandHeight ?? 296}px;--band-h-tablet:${L.bandHeightTablet ?? 354}px`}>
+    <div class="mx-auto w-full max-w-[688px] p-[10px]">
+      <h2
+        class="mb-[20px] text-center font-poppins text-[23px] font-semibold leading-[1.25] text-[#070707]">
+        {c.bandHeading}
+      </h2>
+      <div class="es-copy es-body text-center" set:html={c.bandBody} />
+
+    </div>
+  </section>
+
+  {/* Section 14 — the destination slider, pulled up over the band by a margin
+      every edition authors differently. Custom properties, not `-mt-[Npx]`:
+      Tailwind's JIT cannot compile a class built from runtime data. */}
+  <section
+    class="es-slides-pull"
+    style={`--pull:${L.slidesMargin}px;--pull-mobile:${L.slidesMarginMobile}px`}>
+    <div class="mx-auto max-w-[713px] p-[10px]">
+      <div
+        class="es-slides relative cursor-grab touch-pan-y select-none overflow-hidden bg-[#FFAFAF] shadow-[7px_12px_15px_1px_rgba(0,0,0,0.5)]"
+        data-carousel>
+        {
+          c.slides.map((slide, i) => (
+            <div
+              class:list={["absolute inset-0", i === 0 ? "" : "opacity-0"]}
+              data-slide={i}
+              aria-hidden={i === 0 ? undefined : "true"}>
+              {/* `background_ken_burns=yes` on all six slides: a slow zoom to
+                  1.3 while the slide is showing. Deliberately using Elementor's
+                  own class names — `shot.mjs` already strips
+                  `.elementor-ken-burns--active` before capturing, so the same
+                  neutraliser covers the reference and this page symmetrically
+                  and neither is captured mid-zoom. */}
+              <img
+                class="elementor-ken-burns elementor-ken-burns--in es-slide-img absolute inset-0 h-full w-full object-cover"
+                src={slide.image}
+                width="713"
+                height="386"
+                alt={slide.heading}
+              />
+              <div
+                class="absolute inset-0"
+                style={`background-color:${slide.overlay};mix-blend-mode:darken`}
+                aria-hidden="true">
+              </div>
+              <div class="relative flex h-full items-center justify-center px-[50px]">
+                <div class="w-[70%] text-center text-white mobile:w-[99%]">
+                  <h3 class="mb-[20px] font-poppins text-[24px] font-semibold leading-[1.25] mobile:text-[18px]">
+                    {slide.heading}
+                  </h3>
+                  <div class="es-copy es-body mb-[20px] font-poppins text-[16px] font-normal mobile:text-[14px]">
+                    {slide.description}
+                  </div>
+                  <a
+                    class="inline-block font-poppins text-[16px] font-semibold text-white hover:text-[#DDD536] mobile:text-[14px]"
+                    href={slide.href}>
+                    {slide.button}
+                  </a>
+                </div>
+              </div>
+            </div>
+          ))
+        }
+        <button
+          type="button"
+          data-prev
+          aria-label={t.previousPhoto}
+          class="es-slide-arrow left-[10px]">
+          <svg viewBox="0 0 256 512" class="h-[22px] w-[11px]" fill="#F8F8F8">
+            <path d={ANGLE_LEFT} />
+          </svg>
+        </button>
+        <button
+          type="button"
+          data-next
+          aria-label={t.nextPhoto}
+          class="es-slide-arrow right-[10px]">
+          <svg viewBox="0 0 256 512" class="h-[22px] w-[11px]" fill="#F8F8F8">
+            <path d={ANGLE_RIGHT} />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  {/* Section 15 — divider (`width=14%`, `gap=19px`) */}
+  <section>
+    <div class="mx-auto max-w-[1140px] p-[10px]">
+      <div class="py-[19px] mobile:py-[14px]">
+        <div
+          class="mx-auto h-[5px] w-[14%] bg-[#67b3e8] mobile:w-[24%]"
+          aria-hidden="true">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* Section 16 — "Testimonios" (`content_width=500`, `margin-top: -10px`) */}
+  <section class="-mt-[10px]">
+    <div class="mx-auto max-w-[500px] p-[10px]">
+      <h3
+        class="mx-auto w-[83.75%] text-center font-poppins text-[32px] font-semibold leading-[1.2] tracking-[-0.7px] text-[#2C2F30] mobile:text-[23px]">
+        {c.testimonialsHeading}
+      </h3>
+    </div>
+  </section>
+
+  {/* Section 17 — Trustpilot badge and the review slider */}
+  <section class="mt-[10px] mobile:mt-0">
+    <div class="mx-auto flex max-w-[1140px] mobile:flex-col">
+      <div class="es-tp-media mb-[40px] flex items-center p-[10px] mobile:mb-0">
+        <a href={TRUSTPILOT_URL} target="_blank" rel="noopener" class="es-hover-float w-full">
+          <img
+            class="block h-auto w-full"
+            src="/home/trustpilot-identity.webp"
+            width="484"
+            height="144"
+            alt="Cuban Trip Experience en Trustpilot"
+          />
+        </a>
+      </div>
+      {/* `widget:reviews`. The widget box is 616px wide, its swiper 81% of that
+          and centred, with 40px of bottom padding for the bullets. The wrapper
+          takes the height of the TALLEST slide, not the visible one, so all
+          three are stacked in one grid cell and only the first is painted —
+          which is what makes the widget 245.75px rather than the 145px the
+          visible card measures. */}
+      <div class="es-tp-reviews p-[10px]">
+        <div class="es-reviews-swiper cursor-grab touch-pan-y select-none" data-carousel data-hide-class="invisible">
+          <div class="es-reviews-track">
+            {
+              esReviews.map((review, i) => (
+                <div
+                  class:list={["es-review-card", i === 0 ? "" : "invisible"]}
+                  data-slide={i}
+                  aria-hidden={i === 0 ? undefined : "true"}>
+                  <div class="es-review-header">
+                    <img
+                      class="h-[36px] w-[36px] shrink-0 rounded-full object-cover"
+                      src={reviewAvatar.src}
+                      width="36"
+                      height="36"
+                      alt=""
+                    />
+                    <cite class="ml-[9px] not-italic">
+                      <span class="block font-poppins text-[14px] leading-[21px] text-[#3A3838] underline">
+                        {review.name}
+                      </span>
+                      <span class="es-stars" aria-hidden="true">
+                        {[0, 1, 2, 3, 4].map((n) => (
+                          <span class="es-star">
+                            <svg viewBox="0 0 576 512" fill="#D6D6D6">
+                              <path d={STAR} />
+                            </svg>
+                            <span
+                              class="es-star-fill"
+                              style={`width:${Math.min(1, Math.max(0, review.rating - n)) * 100}%`}>
+                              <svg viewBox="0 0 576 512" fill="#00B479">
+                                <path d={STAR} />
+                              </svg>
+                            </span>
+                          </span>
+                        ))}
+                      </span>
+                      {review.handle && (
+                        <span class="block text-[12.5px] leading-[18.75px] text-[#7A7A7A]">
+                          {review.handle}
+                        </span>
+                      )}
+                    </cite>
+                    <span class="es-review-icon">
+                      <svg viewBox="0 0 576 512" fill="#00B479">
+                        <path d={STAR} />
+                      </svg>
+                    </span>
+                  </div>
+                  <div class="es-review-content">
+                    <div class="text-[14px] leading-[20px] text-[#7A7A7A]">
+                      {review.content}
+                    </div>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+          <div class="es-review-dots" role="tablist" aria-label="Testimonios">
+            {
+              esReviews.map((review, i) => (
+                <button
+                  type="button"
+                  data-dot={i}
+                  role="tab"
+                  aria-selected={i === 0 ? "true" : "false"}
+                  aria-label={review.name}
+                  class:list={[
+                    "block h-[8px] w-[8px] rounded-full",
+                    i === 0 ? "bg-[#00B479]" : "bg-[#D6D6D6]",
+                  ]}
+                />
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* Section 18 — spacer */}
+  <div class="mx-auto max-w-[1140px] p-[10px]">
+    <div class="h-[50px]" aria-hidden="true"></div>
+  </div>
+</EsLayout>
+
+
+<script>
+  // Click- and drag-driven only. The source autoplays both of these, but a
+  // moving slider makes every capture a race — `shot.mjs` has to stop the
+  // source's own autoplay for exactly that reason. Arrows, dots and a swipe move
+  // them; nothing moves on its own.
+  for (const root of document.querySelectorAll<HTMLElement>("[data-carousel]")) {
+    const slides = [...root.querySelectorAll<HTMLElement>("[data-slide]")];
+    const dots = [...root.querySelectorAll<HTMLElement>("[data-dot]")];
+    if (slides.length < 2) continue;
+    // The review cards are stacked in one grid cell, so they hide with
+    // `invisible` rather than `opacity-0`; the destination slides overlap and
+    // fade.
+    const hide = root.dataset.hideClass ?? "opacity-0";
+    const [on, off] = root.dataset.hideClass
+      ? ["bg-[#00B479]", "bg-[#D6D6D6]"]
+      : ["bg-[#F8F43D]", "bg-white"];
+    let current = 0;
+
+    const show = (next: number) => {
+      current = (next + slides.length) % slides.length;
+      slides.forEach((slide, i) => {
+        slide.classList.toggle(hide, i !== current);
+        if (i === current) slide.removeAttribute("aria-hidden");
+        else slide.setAttribute("aria-hidden", "true");
+        // Ken Burns runs only on the slide that is showing.
+        slide
+          .querySelector(".elementor-ken-burns")
+          ?.classList.toggle("elementor-ken-burns--active", i === current);
+      });
+      dots.forEach((dot, i) => {
+        dot.classList.toggle(on, i === current);
+        dot.classList.toggle(off, i !== current);
+        dot.setAttribute("aria-selected", i === current ? "true" : "false");
+      });
+    };
+
+    // Paint the initial state through the same path, so the first slide starts
+    // its Ken Burns zoom on load rather than waiting for a click. Deferred a
+    // frame: applying the start and end transforms in the same tick gives the
+    // transition no resolved starting value and it jumps straight to scale 1.3
+    // instead of easing there over 20s.
+    requestAnimationFrame(() => requestAnimationFrame(() => show(0)));
+
+    root.querySelector("[data-prev]")?.addEventListener("click", () => show(current - 1));
+    root.querySelector("[data-next]")?.addEventListener("click", () => show(current + 1));
+    dots.forEach((dot, i) => dot.addEventListener("click", () => show(i)));
+
+    // Swipe / drag. `touch-pan-y` on the surface lets the browser keep vertical
+    // scrolling while we claim the horizontal axis.
+    let startX = 0;
+    let dragging = false;
+    root.addEventListener("pointerdown", (event: PointerEvent) => {
+      if (event.button !== 0) return;
+      dragging = true;
+      startX = event.clientX;
+      root.classList.replace("cursor-grab", "cursor-grabbing");
+    });
+    root.addEventListener("pointerup", (event: PointerEvent) => {
+      if (!dragging) return;
+      dragging = false;
+      root.classList.replace("cursor-grabbing", "cursor-grab");
+      const dx = event.clientX - startX;
+      // 40px, so a tap on a dot, an arrow or a link never counts as a swipe.
+      if (Math.abs(dx) > 40) show(current + (dx < 0 ? 1 : -1));
+    });
+    root.addEventListener("pointercancel", () => {
+      dragging = false;
+      root.classList.replace("cursor-grabbing", "cursor-grab");
+    });
+    root.addEventListener("dragstart", (event) => event.preventDefault());
+  }
+</script>
+
+<style>
+  /* `es.css` sets `img { content-visibility: auto }`. On a 3700px page Chrome
+     skips painting everything far below the viewport, and `fullPage` captures
+     those images blank — a code defect that looks like a missing asset. Scoped
+     opt-out; `es.css` is frozen and stays untouched. */
+  img {
+    content-visibility: visible;
+  }
+
+
+  /* Elementor's Ken Burns timings, verbatim: a 10s linear transform transition
+     that becomes 20s while the slide is active. */
+  .elementor-ken-burns {
+    transition: transform 10s linear;
+  }
+
+  .elementor-ken-burns--in {
+    transform: scale(1);
+  }
+
+  .elementor-ken-burns--active {
+    transition-duration: 20s;
+  }
+
+  .elementor-ken-burns--active.elementor-ken-burns--in {
+    transform: scale(1.3);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .elementor-ken-burns,
+    .elementor-ken-burns--active.elementor-ken-burns--in {
+      transition: none;
+      transform: none;
+    }
+  }
+
+  /* Section 1's hero copy authors `typography_line_height: 1px`, which is a real
+     value in the source and not a typo on our side. */
+  /* Astra sets `body { line-height: 1.6em }`, which inherits as a computed
+     LENGTH (25.6px desktop, 23.3472px under the 921px root scale). `es.css`
+     re-declares `1.6em` on `.es-copy`, which recomputes against each block's
+     own font-size — so a 12.5px or 14px block gets 20px or 22.4px instead of
+     the source's 25.6px and every paragraph wraps short. `1.6rem` reproduces
+     Astra exactly, and the two-class selector outranks the frozen `es.css`. */
+  .es-copy.es-body,
+  .es-copy.es-body p {
+    line-height: 1.6rem;
+  }
+
+  .es-hero-copy,
+  .es-hero-copy p {
+    line-height: 1px;
+  }
+
+  /* Section 6 columns. `matanzas`-style tablet overrides exist here too:
+     33 / 32 / 33 rather than the desktop 34.522 / 33.269 / 31.453. */
+  .es-feature {
+    flex-basis: var(--basis);
+    flex-shrink: 0;
+    min-width: 0;
+  }
+
+  @media (min-width: 1025px) {
+    .es-feature-box {
+      width: var(--box-w);
+    }
+  }
+
+  /* Elementor's `.elementor-icon` is a 50px inline-block sitting on the
+     parent's baseline, so the line box it creates is 57.59px tall — 7.59px
+     more than the glyph. Sizing the SVG directly loses that and the whole
+     column comes up short. */
+  .es-icon {
+    display: inline-block;
+    font-size: 50px;
+    line-height: 50px;
+  }
+
+  /* Font Awesome glyphs keep their own aspect ratio — `fa-star`,
+     `fa-map-signs` and `fa-dna` are all 576x512, not square — so forcing the
+     SVG to 1em x 1em squashes them. */
+  .es-icon svg {
+    display: block;
+    width: auto;
+    height: 1em;
+  }
+
+  @media (min-width: 768px) and (max-width: 1024px) {
+    .es-feature {
+      flex-basis: var(--tablet-basis);
+    }
+  }
+
+  @media (max-width: 767px) {
+    .es-feature {
+      flex-basis: auto;
+    }
+
+    .es-feature-box {
+      width: 300px;
+    }
+  }
+
+  /* Section 3's vehicle is the section background, not an image widget. */
+  .es-van-mobile {
+    background-image: url("/home/group-taxi.webp");
+    background-size: var(--van-w);
+    background-position: var(--van-x) var(--van-y);
+  }
+
+  /* Section 9 is `layout=full_width`, so its columns split the viewport, not the
+     1140px container. */
+  .es-van-cta {
+    margin-top: var(--van-cta-mt);
+  }
+
+  .es-van-text {
+    flex-basis: 42.627%;
+    flex-shrink: 0;
+    min-width: 0;
+  }
+
+  .es-van-media {
+    flex-basis: 57.373%;
+    flex-shrink: 0;
+    min-width: 0;
+  }
+
+  /* Section 11 columns; the image is `space=56%` of its own widget box, 78% at
+     tablet and 69% at mobile. */
+  .es-discover-media {
+    flex-basis: 51.346%;
+    flex-shrink: 0;
+    min-width: 0;
+  }
+
+  .es-discover-text {
+    flex-basis: 48.606%;
+    flex-shrink: 0;
+    min-width: 0;
+  }
+
+  .es-discover-img {
+    max-width: 56%;
+  }
+
+  @media (min-width: 768px) and (max-width: 1024px) {
+    .es-discover-media,
+    .es-discover-text {
+      flex-basis: 50%;
+    }
+
+    .es-discover-img {
+      max-width: 78%;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .es-discover-media,
+    .es-discover-text {
+      flex-basis: auto;
+    }
+
+    .es-discover-img {
+      max-width: 69%;
+    }
+
+    .es-booking-img {
+      max-width: var(--book-w);
+    }
+
+    .es-booking {
+      margin-top: var(--book-mt);
+    }
+
+    .es-van-mobile-cta {
+      margin-top: var(--cta-mt);
+    }
+  }
+
+  /* Section 13 `custom_height=296px` (`354px` tablet), `height=min-height`. */
+  .es-spacer {
+    height: var(--sp);
+  }
+
+  @media (max-width: 767px) {
+    .es-spacer {
+      height: var(--sp-mobile);
+    }
+  }
+
+  .es-slides-pull {
+    margin-top: var(--pull);
+  }
+
+  @media (max-width: 767px) {
+    .es-slides-pull {
+      margin-top: var(--pull-mobile);
+    }
+  }
+
+  .es-band {
+    min-height: var(--band-h);
+  }
+
+  /* `max-width: 1024px`, not a tablet-only band: Elementor's mobile value
+     inherits from tablet unless the author sets one, and this section does not. */
+  @media (max-width: 1024px) {
+    .es-band {
+      min-height: var(--band-h-tablet);
+    }
+  }
+
+  /* Section 14 `slides_height=386px` (`302px` mobile). */
+  .es-slides {
+    height: 386px;
+  }
+
+  @media (max-width: 767px) {
+    .es-slides {
+      height: 302px;
+    }
+  }
+
+  .es-slide-arrow {
+    position: absolute;
+    top: 50%;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    transform: translateY(-50%);
+  }
+
+  /* Section 17 columns; the review slider is `width=81%` of a widget that is
+     itself `_element_custom_width=104.226%`. */
+  .es-tp-media {
+    flex-basis: 44.21%;
+    flex-shrink: 0;
+    min-width: 0;
+  }
+
+  .es-tp-reviews {
+    flex-basis: 55.79%;
+    flex-shrink: 0;
+    min-width: 0;
+  }
+
+  /* `width=81%` on the swiper, `slide_border_radius=14px`,
+     `slide_padding=15px 15px 45px 10px`, `separator_size=2px`,
+     `space_between=12px`, `star_size=20px`, `icon_size=40px`. */
+  .es-reviews-swiper {
+    position: relative;
+    width: 81%;
+    margin: 0 auto;
+    padding-bottom: 40px;
+  }
+
+  .es-reviews-track {
+    display: grid;
+  }
+
+  .es-review-card {
+    grid-area: 1 / 1;
+    border: 1px solid #e0dede;
+    border-radius: 14px;
+    background: #ffffff;
+  }
+
+  .es-review-header {
+    display: flex;
+    align-items: flex-start;
+    padding: 15px 15px 6px 10px;
+    border-bottom: 2px solid #e0dede;
+  }
+
+  .es-review-content {
+    padding: 6px 15px 45px 10px;
+  }
+
+  .es-stars {
+    display: block;
+    font-size: 20px;
+    line-height: 30px;
+  }
+
+  .es-star {
+    position: relative;
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    margin-right: 2px;
+    vertical-align: middle;
+  }
+
+  .es-star:last-child {
+    margin-right: 0;
+  }
+
+  .es-star svg {
+    display: block;
+    width: 1em;
+    height: 1em;
+  }
+
+  .es-star-fill {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .es-review-icon {
+    margin-left: auto;
+    font-size: 40px;
+    line-height: 40px;
+  }
+
+  .es-review-icon svg {
+    display: block;
+    width: 1em;
+    height: 1em;
+  }
+
+  .es-review-dots {
+    position: absolute;
+    bottom: 12px;
+    left: 0;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  @media (max-width: 767px) {
+    .es-tp-media,
+    .es-tp-reviews {
+      flex-basis: auto;
+    }
+  }
+</style>

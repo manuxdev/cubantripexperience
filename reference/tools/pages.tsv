@@ -1,0 +1,33 @@
+# lang	slug	post_id	wp_path	title
+es	inicio	1732	/es/	Inicio
+es	servicios	448	/servicios/	Servicios
+es	destinos	1201	/destinos/	Destinos
+es	la-habana	45	/la-habana/	La Habana
+es	trinidad	47	/trinidad-es/	Trinidad
+es	cienfuegos	1671	/cienfuegos-es/	Cienfuegos
+es	matanzas	43	/matanzas-es/	Matanzas
+es	santiago-de-cuba	1688	/santiago-cuba-es/	Santiago de Cuba
+es	pinar-del-rio	2280	/pinar-del-rio-es/	Pinar del Río
+es	contactos	57	/contactos/	Contactos
+es	reservar	55	/reservar/	Reservar
+en	home	17	/	Home
+en	services	1781	/services/	Services
+en	destinations	1776	/destinations/	Destinations
+en	havana	1777	/havana/	Havana
+en	trinidad	1782	/trinidad/	Trinidad
+en	cienfuegos	1774	/cienfuegos/	Cienfuegos
+en	matanzas	1778	/matanzas/	Matanzas
+en	santiago-cuba	1780	/santiago-cuba/	Santiago de Cuba
+en	pinar-del-rio	2222	/pinar-del-rio/	Pinar del Río
+en	contact-us	1775	/contact-us/	Contact us
+en	bookings	1773	/bookings/	Bookings
+ru	dom	1723	/ru/	Home-Ru
+ru	uslugi	1977	/ru/%d1%83%d1%81%d0%bb%d1%83%d0%b3%d0%b8/	Yслуги
+ru	napravleniya	1972	/ru/h%d0%b0%d0%bf%d1%80%d0%b0%d0%b2%d0%bb%d0%b5%d0%bd%d0%b8%d1%8f/	Hаправления
+ru	gavana	1973	/ru/%d0%b3%d0%b0%d0%b2%d0%b0%d0%bd%d0%b0/	Гавана
+ru	troica	1978	/ru/t%d1%80%d0%be%d0%b8%d1%86%d0%b0/	Tроица
+ru	sienfuegos	1970	/ru/%d1%81%d1%8c%d0%b5%d0%bd%d1%84%d1%83%d1%8d%d0%b3%d0%be%d1%81/	Сьенфуэгос
+ru	matansas	1974	/ru/m%d0%b0%d1%82%d0%b0%d0%bd%d1%81%d0%b0%d1%81/	Mатансас
+ru	santyago-de-kuba	1976	/ru/c%d0%b0%d0%bd%d1%82%d1%8c%d1%8f%d0%b3%d0%be-%d0%b4%d0%b5-k%d1%83%d0%b1%d0%b0/	Cантьяго-де-Kуба
+ru	kontakty	1971	/ru/%d0%ba%d0%be%d0%bd%d1%82%d0%b0%d0%ba%d1%82%d1%8b/	Kонтакты
+ru	bronirovat	1975	/ru/%d0%b1%d1%80%d0%be%d0%bd%d0%b8%d1%80%d0%be%d0%b2%d0%b0%d1%82%d1%8c/	Бронировать

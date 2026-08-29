@@ -1,0 +1,254 @@
+---
+import { spanishHome as home } from "../../i18n/content/es/home";
+---
+
+<a class="es-skip-link" href="#contenido">Ir al contenido</a>
+<header class="es-site-header">
+  <div class="es-topbar">
+    <a class="es-brand" href="/es/" aria-label="Cuban Trip Experience, portada">
+      <img src="/home/logo.webp" alt="Cuban Trip Experience" width="116" height="98" />
+    </a>
+    <div class="es-top-social" aria-label="Redes sociales">
+      <a href="https://www.facebook.com/profile.php?id=61551441593993" target="_blank" rel="noreferrer" aria-label="Facebook">f</a>
+      <a href="https://www.instagram.com/cubantripexperience/" target="_blank" rel="noreferrer" aria-label="Instagram">◎</a>
+      <a href="https://api.whatsapp.com/send?phone=5353788250" target="_blank" rel="noreferrer" aria-label="WhatsApp">◔</a>
+    </div>
+  </div>
+  <div class="es-nav-wrap" data-home-nav>
+    <div class="es-nav-inner">
+      <button class="es-menu-toggle" type="button" aria-expanded="false" aria-controls="es-main-menu" data-menu-toggle>
+        <span class="sr-only">Abrir menú</span><span aria-hidden="true">☰</span>
+      </button>
+      <nav id="es-main-menu" aria-label="Menú principal" data-menu>
+        <a href="/es/destinos/">Destinos</a>
+        <a href="/services/">Servicios</a>
+        <a href="/contact-us/">Contactos</a>
+      </nav>
+      <a class="es-book-button" href="http://localhost:8080/reservar/">Reservar</a>
+      <label class="es-language"><span class="sr-only">Idioma</span>
+        <select data-language-select aria-label="Idioma">
+          <option value="/es/">🇪🇸</option>
+          <option value="/ru/">🇷🇺</option>
+          <option value="/">🇺🇸</option>
+        </select>
+      </label>
+    </div>
+  </div>
+</header>
+
+<main id="contenido">
+  <section class="es-hero" aria-labelledby="home-title">
+    <div class="es-hero-copy">
+      <h1 id="home-title">{home.hero.title}</h1>
+      {home.hero.lines.map((line) => <p>{line}</p>)}
+      <a class="es-hero-book-button" href="http://localhost:8080/reservar/">Reservar</a>
+    </div>
+  </section>
+
+  <section class="es-group-section es-group-section--mobile" aria-labelledby="group-mobile-title">
+    <div class="es-group-copy">
+      <h2 id="group-mobile-title">{home.group.title}</h2>
+      <p>{home.group.mobileBody}</p>
+      <a class="es-blue-button" href="/services/">Ver Servicios</a>
+    </div>
+  </section>
+
+  <section class="es-why" aria-labelledby="why-title">
+    <div class="es-section-intro">
+      <h2 id="why-title">{home.whyUs.title}</h2>
+      <p>{home.whyUs.body}</p>
+    </div>
+    <div class="es-why-cards">
+      {home.whyUs.cards.map((card, index) => (
+        <article>
+          <span class="es-card-icon" aria-hidden="true">{index === 0 ? "★" : index === 1 ? "⌖" : "✦"}</span>
+          <h3>{card.title}</h3>
+          <p>{card.body}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="es-group-section es-group-section--desktop" aria-labelledby="group-desktop-title">
+    <div class="es-group-copy">
+      <h2 id="group-desktop-title">{home.group.title}</h2>
+      <p>{home.group.desktopBody}</p>
+      <a class="es-blue-button" href="/services/">Ver Servicios</a>
+    </div>
+  </section>
+
+  <section class="es-destination" aria-labelledby="destination-title">
+    <div class="es-destination-image">
+      <img src="/home/havana.webp" alt="La Habana, Cuba" width="768" height="1152" loading="lazy" />
+    </div>
+    <div class="es-destination-copy">
+      <h2 id="destination-title">{home.destination.title}</h2>
+      <p>{home.destination.body}</p>
+      <a href="http://localhost:8080/reservar/"><img src="/home/booking-wordmark.webp" alt="Cuban Trip Experience" width="466" height="90" loading="lazy" /></a>
+    </div>
+  </section>
+
+  <section class="es-places" aria-labelledby="places-title">
+    <div class="es-places-heading">
+      <h2 id="places-title">Los mejores lugares para visitar</h2>
+      <p>Los mejores lugares para visitar y pasar unas agradables vacaciones en Cuba</p>
+    </div>
+    <div class="es-carousel" data-home-carousel role="region" aria-roledescription="carrusel" aria-label="Destinos de Cuba" tabindex="0">
+      <div class="es-slide-viewport">
+        {home.places.map((place, index) => (
+          <article class:list={["es-place-slide", index === 0 && "is-active"]} data-slide aria-hidden={index === 0 ? "false" : "true"}>
+            <img src={place.image} alt="" width="1080" height="810" loading={index === 0 ? "eager" : "lazy"} />
+            <div class="es-place-overlay"></div>
+            <div class="es-place-copy">
+              <h3>{place.title}</h3>
+              <p>{place.body}</p>
+              <a href={place.href}>Ver más <span aria-hidden="true">&gt;</span></a>
+            </div>
+          </article>
+        ))}
+      </div>
+      <button class="es-carousel-arrow es-carousel-prev" type="button" data-carousel-prev aria-label="Destino anterior">‹</button>
+      <button class="es-carousel-arrow es-carousel-next" type="button" data-carousel-next aria-label="Siguiente destino">›</button>
+      <div class="es-carousel-dots" role="tablist" aria-label="Seleccionar destino" hidden>
+        {home.places.map((place, index) => <button type="button" role="tab" aria-label={`Ver ${place.title}`} aria-selected={index === 0 ? "true" : "false"} data-carousel-dot={index}></button>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="es-testimonials" aria-labelledby="testimonials-title">
+    <h2 id="testimonials-title">Testimonios de nuestros clientes:</h2>
+    <div class="es-testimonials-content">
+      <a class="es-trustpilot-identity" href="https://www.trustpilot.com/review/cubantripexperience.com" target="_blank" rel="noreferrer">
+        <img src="/home/trustpilot-identity.webp" alt="Cuban Trip Experience en Trustpilot" width="594" height="177" loading="lazy" />
+      </a>
+      <div class="es-testimonial-carousel" data-testimonial-carousel role="region" aria-roledescription="carrusel" aria-label="Opiniones de clientes" tabindex="0">
+        <div class="es-testimonial-viewport" aria-live="polite">
+      {home.testimonials.map((testimonial, index) => (
+        <article class:list={["es-testimonial", index === 0 && "is-active"]} data-testimonial-slide aria-hidden={index === 0 ? "false" : "true"}>
+          <a class="es-testimonial-header" href="https://www.trustpilot.com/review/cubantripexperience.com" target="_blank" rel="noreferrer">
+            <span class="es-avatar" aria-hidden="true"></span>
+            <span class="es-reviewer"><strong>{testimonial.name}</strong><span class="es-stars" style={`--rating: ${testimonial.rating};`} aria-label={`${testimonial.rating.toFixed(1)} de 5 estrellas`}>★★★★★</span>{testimonial.handle && <small>{testimonial.handle}</small>}</span>
+            <span class="es-trustpilot" aria-hidden="true"><svg viewBox="0 0 800 761" focusable="false"><path d="M799.89 290.83H494.44L400.09 0l-94.64 290.83L0 290.54l247.37 179.92L152.72 761l247.37-179.63L647.16 761l-94.35-290.54z" fill="currentColor"></path><path d="m574.04 536.24-21.23-65.78-152.72 110.91z" fill="#005128"></path></svg></span>
+          </a>
+          <p>{testimonial.body}</p>
+        </article>
+      ))}
+        </div>
+        <div class="es-testimonial-dots" role="tablist" aria-label="Seleccionar opinión">
+          {home.testimonials.map((testimonial, index) => <button type="button" role="tab" aria-label={`Ver opinión de ${testimonial.name}`} aria-selected={index === 0 ? "true" : "false"} data-testimonial-dot={index}></button>)}
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="es-footer">
+  <div class="es-footer-inner">
+    <a class="es-footer-brand" href="/es/" aria-label="Cuban Trip Experience, portada">
+      <img src="/home/logo.webp" alt="Cuban Trip Experience" width="116" height="98" loading="lazy" />
+    </a>
+    <p>© 2023 CubanTripExperience | Todos los Derechos Reservados.</p>
+    <nav aria-label="Enlaces del pie de página"><a href="/es/destinos/">Destinos</a><a href="/services/">Servicios</a><a href="/contact-us/">Contactos</a></nav>
+    <div class="es-footer-social">
+      <a href="mailto:cubantripexperience@gmail.com" aria-label="Correo electrónico">✉</a>
+      <a href="https://www.facebook.com/profile.php?id=61551441593993" target="_blank" rel="noreferrer" aria-label="Facebook">f</a>
+      <a href="https://www.instagram.com/cubantripexperience/" target="_blank" rel="noreferrer" aria-label="Instagram">◎</a>
+      <a href="https://wa.me/+5353788250/" target="_blank" rel="noreferrer" aria-label="WhatsApp">◔</a>
+    </div>
+  </div>
+</footer>
+<button class="es-scroll-top" type="button" data-scroll-top aria-label="Volver arriba">↑</button>
+
+<script>
+  const carousel = document.querySelector<HTMLElement>("[data-home-carousel]");
+  const testimonialCarousel = document.querySelector<HTMLElement>("[data-testimonial-carousel]");
+  const menuToggle = document.querySelector<HTMLButtonElement>("[data-menu-toggle]");
+  const menu = document.querySelector<HTMLElement>("[data-menu]");
+  const homeNav = document.querySelector<HTMLElement>("[data-home-nav]");
+  const siteHeader = document.querySelector<HTMLElement>(".es-site-header");
+  const scrollTop = document.querySelector<HTMLButtonElement>("[data-scroll-top]");
+  const language = document.querySelector<HTMLSelectElement>("[data-language-select]");
+
+  menuToggle?.addEventListener("click", () => {
+    const open = menuToggle.getAttribute("aria-expanded") !== "true";
+    menuToggle.setAttribute("aria-expanded", String(open));
+    menu?.classList.toggle("is-open", open);
+  });
+
+  language?.addEventListener("change", () => {
+    window.location.assign(language.value);
+  });
+
+  if (carousel) {
+    const slides = [...carousel.querySelectorAll<HTMLElement>("[data-slide]")];
+    
+    let active = 0;
+    let timer: number | undefined;
+    const show = (index: number) => {
+      active = (index + slides.length) % slides.length;
+      slides.forEach((slide, slideIndex) => {
+        const selected = slideIndex === active;
+        slide.classList.toggle("is-active", selected);
+        slide.setAttribute("aria-hidden", String(!selected));
+      });
+      
+    };
+    const restart = () => {
+      window.clearInterval(timer);
+      timer = window.setInterval(() => show(active + 1), 6000);
+    };
+    carousel.querySelector("[data-carousel-prev]")?.addEventListener("click", () => { show(active - 1); restart(); });
+    carousel.querySelector("[data-carousel-next]")?.addEventListener("click", () => { show(active + 1); restart(); });
+    
+    carousel.addEventListener("mouseenter", () => window.clearInterval(timer));
+    carousel.addEventListener("mouseleave", restart);
+    carousel.addEventListener("focusin", () => window.clearInterval(timer));
+    carousel.addEventListener("focusout", restart);
+        carousel.addEventListener("keydown", (event) => {
+          if (event.key === "ArrowLeft") { event.preventDefault(); show(active - 1); restart(); }
+          if (event.key === "ArrowRight") { event.preventDefault(); show(active + 1); restart(); }
+        });
+    restart();
+  }
+
+  if (testimonialCarousel) {
+    const slides = [...testimonialCarousel.querySelectorAll<HTMLElement>("[data-testimonial-slide]")];
+    const dots = [...testimonialCarousel.querySelectorAll<HTMLButtonElement>("[data-testimonial-dot]")];
+    let active = 0;
+    let timer: number | undefined;
+    const show = (index: number) => {
+      active = (index + slides.length) % slides.length;
+      slides.forEach((slide, slideIndex) => {
+        const selected = slideIndex === active;
+        slide.classList.toggle("is-active", selected);
+        slide.setAttribute("aria-hidden", String(!selected));
+      });
+      dots.forEach((dot, dotIndex) => dot.setAttribute("aria-selected", String(dotIndex === active)));
+    };
+    const restart = () => {
+      window.clearInterval(timer);
+      timer = window.setInterval(() => show(active + 1), 5000);
+    };
+    dots.forEach((dot, index) => dot.addEventListener("click", () => { show(index); restart(); }));
+    testimonialCarousel.addEventListener("mouseenter", () => window.clearInterval(timer));
+    testimonialCarousel.addEventListener("mouseleave", restart);
+    testimonialCarousel.addEventListener("focusin", () => window.clearInterval(timer));
+    testimonialCarousel.addEventListener("focusout", restart);
+    testimonialCarousel.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft") { event.preventDefault(); show(active - 1); restart(); }
+      if (event.key === "ArrowRight") { event.preventDefault(); show(active + 1); restart(); }
+    });
+    restart();
+  }
+
+  const updateScrollState = () => {
+    scrollTop?.classList.toggle("is-visible", window.scrollY > 100);
+    const navHeight = homeNav?.offsetHeight ?? 0;
+    const navTrigger = (siteHeader?.offsetHeight ?? window.innerHeight) - navHeight;
+    homeNav?.classList.toggle("is-stuck", window.scrollY >= navTrigger);
+  };
+  window.addEventListener("scroll", updateScrollState, { passive: true });
+  window.addEventListener("resize", updateScrollState, { passive: true });
+  scrollTop?.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+  updateScrollState();
+</script>

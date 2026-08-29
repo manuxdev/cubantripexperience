@@ -1,0 +1,42 @@
+---
+import heroImage from "@assets/pages/es/hero.webp";
+
+// Section 1 across every Spanish page (10 of 11 share this exact `_style_`
+// string): `cover-image-about-cuba-for-a-trav-01.webp`, `#503607` overlay at
+// Elementor's default 50% opacity, `custom_height=328px` (`213px` mobile).
+// `inicio` differs only by `height=full` (`full` prop).
+//
+// The column is vertically centred inside the section, and the heading widget
+// carries Elementor's default 20px inter-widget margin because a spacer follows
+// it. That margin is what puts the heading 10px above the section's optical
+// centre (125px, not 135px, at 1440px) — the spacer itself is hidden on desktop
+// and tablet and only contributes its 10px at mobile.
+export interface Props {
+  title: string;
+  full?: boolean;
+}
+
+const { title, full = false } = Astro.props;
+---
+
+<section
+  class:list={[
+    "relative bg-cover bg-no-repeat",
+    "bg-[position:bottom_center] tablet:bg-[position:center_right] mobile:bg-[position:bottom_center]",
+  ]}
+  style={`background-image: url(${heroImage.src})`}>
+  <div class="absolute inset-0 bg-es-overlay/50"></div>
+  <div
+    class:list={[
+      "relative z-10 flex items-center",
+      full ? "min-h-screen" : "min-h-[328px] mobile:min-h-[213px]",
+    ]}>
+    <div class="w-full p-[10px]">
+      <h1
+        class="mb-[20px] mobile:mt-[80px] text-center font-poppins text-[47px] font-semibold leading-[58.75px] text-white tablet:text-[45px] tablet:leading-[56.25px] mobile:text-[24px] mobile:leading-[30px]">
+        {title}
+      </h1>
+      <div class="hidden h-[10px] mobile:block" aria-hidden="true"></div>
+    </div>
+  </div>
+</section>
