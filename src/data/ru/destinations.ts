@@ -89,7 +89,7 @@ export const destinations: EsDestination[] = [  {
   },
   {
     slug: "troica",
-    title: "Tроица | Cuban Trip Experience",
+    title: "Тринидад | Cuban Trip Experience",
     heroTitle: "Тринидад",
     ctaTitle: "МЫ ДОСТАВИМ ВАС ВО ВРЕМЯ И В НУЖНОЕ МЕСТО",
     ctaTitleMobileWidth: "auto",
@@ -252,7 +252,7 @@ export const destinations: EsDestination[] = [  {
   },
   {
     slug: "matansas",
-    title: "Mатансас | Cuban Trip Experience",
+    title: "Матансас | Cuban Trip Experience",
     heroTitle: "Матансас",
     ctaTitle: "МЫ ДОСТАВИМ ВАС СОВРЕМЕННО В НУЖНОЕ МЕСТО",
     navContentWidth: 930,
@@ -327,7 +327,7 @@ export const destinations: EsDestination[] = [  {
   },
   {
     slug: "santyago-de-kuba",
-    title: "Cантьяго-де-Kуба | Cuban Trip Experience",
+    title: "Сантьяго-де-Куба | Cuban Trip Experience",
     heroTitle: "Сантьяго-де-Куба",
     ctaTitle: "МЫ ДОСТАВИМ ВАС СОВРЕМЕННО В НУЖНОЕ МЕСТО",
     navContentWidth: 930,

@@ -93,7 +93,7 @@ export const SERVICES: Record<SiteLang, ServicesContent> = {
     "discoverButton": " DESTINATIONS"
   },
   ru: {
-    "title": "Yслуги | Cuban Trip Experience",
+    "title": "Услуги | Cuban Trip Experience",
     "hero": "\nУслуги",
     "vehiclesHeading": "Типы транспортных средств",
     "tabs": [

@@ -3,6 +3,15 @@ import EsHero from "../components/es/EsHero.astro";
 import EsNav from "../components/es/EsNav.astro";
 import EsFooter from "../components/es/EsFooter.astro";
 import { ROUTES, SOCIAL, STRINGS } from "../i18n/site";
+import {
+  OG_IMAGE,
+  OG_LOCALE,
+  SITE_NAME,
+  alternates,
+  canonicalPath,
+  describe,
+  isNoIndex,
+} from "../i18n/seo";
 import type { SiteLang } from "../i18n/site";
 import logo from "@assets/brand/cuban-trip-experience-logo.webp";
 import "../styles/es.css";
@@ -32,7 +41,7 @@ export interface Props {
 
 const {
   title,
-  description = "Cuban Trip Experience",
+  description,
   heroTitle,
   heroFull = false,
   showReserve = true,
@@ -45,6 +54,17 @@ const {
 } = Astro.props;
 const t = STRINGS[lang];
 const routes = ROUTES[lang];
+
+// Search metadata is keyed by path in `seo.ts`, not passed down page by page:
+// every route is covered from one place, and a page added later cannot quietly
+// ship the shared fallback. An explicit `description` prop still wins.
+const path = Astro.url.pathname;
+const pageDescription = description ?? describe(path, lang);
+const canonical = new URL(canonicalPath(path), Astro.site).toString();
+const ogImage = new URL(OG_IMAGE, Astro.site).toString();
+const noIndex = isNoIndex(path);
+const langAlternates = alternates(path);
+const englishAlternate = langAlternates.find((a) => a.lang === "en")?.href;
 
 const headerSocialLinks = [
   {
@@ -70,8 +90,45 @@ const headerSocialLinks = [
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <meta name="description" content={description} />
     <title>{title}</title>
+    <meta name="description" content={pageDescription} />
+    <link rel="canonical" href={canonical} />
+
+    {/* A thank-you page that says nothing without its `?ref` is no use to a
+        searcher, and an indexed one competes with the page that sends them. */}
+    {noIndex && <meta name="robots" content="noindex, follow" />}
+
+    {/* Three editions of the same page. Without these Google treats them as
+        near-duplicates and picks one; with them it serves each reader theirs.
+        `x-default` points at English, the source's own default language. */}
+    {
+      langAlternates.map((alt) => (
+        <link rel="alternate" hreflang={alt.lang} href={new URL(alt.href, Astro.site)} />
+      ))
+    }
+    {
+      englishAlternate && (
+        <link rel="alternate" hreflang="x-default" href={new URL(englishAlternate, Astro.site)} />
+      )
+    }
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:locale" content={OG_LOCALE[lang]} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:alt" content={SITE_NAME} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#1a1a1a" />
   </head>
   <body>
     <a class="skip-link" href="#main-content">{t.skipToContent}</a>

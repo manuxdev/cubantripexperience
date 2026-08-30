@@ -99,6 +99,19 @@ img {
   line-height: 1.6em;
 }
 
+/*
+ * `flow-root` above is one class, and so is Tailwind's `hidden`. Astro splits
+ * the sheets, and on the booking page `.es-copy` landed after `.hidden`, so
+ * every "how it works" tab panel rendered at once instead of one at a time.
+ *
+ * Two classes outrank one, so this wins on specificity rather than on which
+ * bundle happens to load first — the order between them is not stable. It sits
+ * here rather than in `global.css` because `EsLayout` imports only this sheet.
+ */
+.es-copy.hidden {
+  display: none;
+}
+
 .es-copy p {
   margin-bottom: 1.6em;
 }

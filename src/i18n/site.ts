@@ -86,10 +86,14 @@ export const ROUTES: Record<SiteLang, LangRoutes> = {
 };
 
 /**
- * Menu labels, verbatim from each edition's `nav-menu` widget. Russian keeps the
- * source's own Latin/Cyrillic homoglyph spellings (`Hаправления`, `Yслуги`,
- * `Kонтакты` all start with a Latin capital) — that is what the site renders and
- * what the pixel gate measures.
+ * Menu labels, from each edition's `nav-menu` widget.
+ *
+ * Russian is spelled in real Cyrillic rather than the source's own homoglyphs:
+ * WordPress wrote `Направления`, `Услуги` and `Контакты` with a LATIN capital
+ * H, Y and K. A reader cannot see the difference, but a search engine reads
+ * three different words, so nobody searching `Услуги` ever reached that page.
+ * The pixel gate measured the source's spelling; correcting it moves those
+ * glyphs by a hair and is worth it.
  *
  * English carries a fourth item, Bookings, that Spanish and Russian do not.
  */
@@ -106,9 +110,9 @@ const MENU: Record<SiteLang, NavLink[]> = {
     { label: "Bookings", href: ROUTES.en.booking },
   ],
   ru: [
-    { label: "Hаправления", href: ROUTES.ru.destinations },
-    { label: "Yслуги", href: ROUTES.ru.services },
-    { label: "Kонтакты", href: ROUTES.ru.contact },
+    { label: "Направления", href: ROUTES.ru.destinations },
+    { label: "Услуги", href: ROUTES.ru.services },
+    { label: "Контакты", href: ROUTES.ru.contact },
   ],
 };
 

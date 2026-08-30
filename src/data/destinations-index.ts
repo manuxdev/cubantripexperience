@@ -21,7 +21,7 @@ export const DESTINATIONS_INDEX: Record<
     popular: "Popular Places",
   },
   ru: {
-    title: "Hаправления | Cuban Trip Experience",
+    title: "Направления | Cuban Trip Experience",
     hero: "\nНаправления",
     intro: "\nЗдесь вы найдете ценную информацию о культуре, истории и туристических достопримечательностях самого большого острова Карибского моря.",
     popular: "\nпопулярные места",

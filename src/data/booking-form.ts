@@ -304,7 +304,7 @@ export const BOOKING_FORM: Record<SiteLang, BookingForm> = {
     "buttons": {
       "next": " Следующий",
       "prev": "Бывший",
-      "submit": "Oтправлять"
+      "submit": "Отправлять"
     },
     "firstName": {
       "label": " Имя:",

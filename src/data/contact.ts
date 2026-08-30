@@ -64,7 +64,7 @@ export const CONTACT: Record<SiteLang, ContactContent> = {
     },
   },
   ru: {
-    title: "Kонтакты | Cuban Trip Experience",
+    title: "Контакты | Cuban Trip Experience",
     hero: "\nКонтакты",
     formHeading: "Отправьте нам сообщение",
     helpHeading: "\nМы здесь чтобы помочь вам",
@@ -74,7 +74,7 @@ export const CONTACT: Record<SiteLang, ContactContent> = {
       name: "Имя",
       email: " Почта",
       message: "Менсаже",
-      submit: "Oтправлять",
+      submit: "Отправлять",
       nameLabel: "Nombre",
       emailLabel: "Correo",
       messageLabel: "Mensaje",
